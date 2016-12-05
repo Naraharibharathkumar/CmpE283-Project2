@@ -1,0 +1,91 @@
+<div class="ng-scope">
+    <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+    <div class="col-sm-2">
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav side-nav">
+                <li class="active">
+                    <a href="javascript:;" data-toggle="collapse" data-target="#cluster"><i class="fa fa-fw fa-wrench"></i> Clusters <i class="fa fa-fw fa-caret-down"></i></a>
+                    <ul id="cluster" class="collapse">
+                        <li>
+                            <a href="#/manageCluster"><i class="fa fa-fw fa-dashboard"></i> Manage Clusters</a>
+                        </li>
+                        <li>
+                            <a href="#/createClusters"><i class="fa fa-fw fa-file"></i> Create Clusters</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:;" data-toggle="collapse" data-target="#container"><i class="fa fa-fw fa-desktop"></i> Containers <i class="fa fa-fw fa-caret-down"></i></a>
+                    <ul id="container" class="collapse">
+                        <li>
+                            <a href="#/manageContainer"><i class="fa fa-fw fa-dashboard"></i> Manage Containers</a>
+                        </li>
+                        <li>
+                            <a href="#/createContainer"><i class="fa fa-fw fa-file"></i> Create Containers</a>
+                        </li>
+                        <li>
+                            <a href="#/monitorContainer"><i class="fa fa-fw fa-bar-chart-o"></i> Monitor Containers</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#/createImage"><i class="fa fa-fw fa-file"></i> Create Image</a>
+                </li>
+                <li>
+                    <a href="#/"><i class="fa fa-fw fa-power-off"></i> LogOut</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- /.navbar-collapse -->
+    <div class="col-sm-10">
+        <div id="page-wrapper">
+            <div class="container-fluid">
+                <div class="w3-container w3-black w3-left-align w3-allerta">
+                    <p class="w3-xlarge w3-text-shadow">Containers</p>
+                </div>
+                <br/>
+                <table class="w3-table w3-bordered w3-striped">
+                    <tr class="w3-grey">
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Image</th>
+                        <th>Command</th>
+                        <th>Status</th>
+                        <th>Operation</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    <tr ng-repeat="c in containers | orderBy : 'Name'">
+                        <td>{{ c.Id }}</td>
+                        <td>{{ c.Name }}</td>
+                        <td>{{ c.Image }}</td>
+                        <td>{{ c.Command }}</td>
+                        <td>{{ c.Status }}</td>
+                        <td ng-if="c.Status == 'exited'">
+                            <button class="w3-btn w3-btn-floating w3-green  w3-ripple" ng-click="editContainer('start')">
+                                &#x25ba;</button>
+                            <button class="w3-btn w3-btn-floating w3-yellow w3-ripple" ng-click="editContainer('delete')">
+                                &#x2718;</button>
+                        </td>
+                        <td ng-if="c.Status == 'created'">
+                            <button class="w3-btn w3-btn-floating w3-green  w3-ripple" ng-click="editContainer('start')">
+                                &#x25ba;</button>
+                            <button class="w3-btn w3-btn-floating w3-yellow w3-ripple" ng-click="editContainer('delete')">
+                                &#x2718;</button>
+                        </td>
+                        <td ng-if="c.Status == 'Mexico'">
+                            <button class="w3-btn w3-btn-floating w3-red w3-ripple" ng-click="editContainer('stop')">
+                                &#x25A1;</button>
+                        </td>
+                        <td ng-if="c.Country == 'France'">
+                            <button class="w3-btn w3-btn-floating w3-grey w3-ripple" ng-click="editContainer('restart')">
+                                &#x21ba;</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
