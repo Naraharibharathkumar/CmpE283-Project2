@@ -28,6 +28,9 @@ mainRouter.config([ '$routeProvider', function($routeProvider) {
     }).when('/monitorContainer',{
         templateUrl: 'viewUsage.html',
         controller: 'viewUsageController'
+    }).when('/viewCharts/:containerid',{
+        templateUrl: 'charts.html',
+        controller: 'viewChartsController'
     }).when('/createImage',{
         templateUrl: 'createImage.html',
         controller: 'imageController'
@@ -183,10 +186,10 @@ mainRouter.controller('createClusterController', function($scope,$http){
     $scope.nameMap = {};
     $scope.spinnerIcon = {'visibility': 'hidden'};
 
-    function ContainerInfo(imageName, count, name) {
-        this.ImageName = imageName;
+    function ContainerInfo(imageName, containerName, count) {
+        this.Image = imageName;
+        this.Name = containerName;
         this.Count = count;
-        this.ClusterName = name;
     }
 
     // get images
@@ -241,27 +244,27 @@ mainRouter.controller('createClusterController', function($scope,$http){
                 contName = $scope.nameMap[key];
             }
 
-            var containerInfoJson = new ContainerInfo(key, contNum, contName);
+            var containerInfoJson = new ContainerInfo(key,contName,contNum);
+            console.log(containerInfoJson)
             containerInfoJSONArray.push(containerInfoJson);
             console.log("cluster name: " + $scope.clustername);
         }
-
-        console.log(JSON.stringify(containerInfoJSONArray));
-        //
-        // $http({
-        //     method: 'POST',
-        //     url: 'http://localhost:3000/crud/createCluster',
-        //     data: JSON.stringify(containerInfoJSONArray),   // TODO: FIX ME
-        //     headers: {'Content-Type': 'application/json'}
-        // }).success(function(data, status, headers, config) {
-        //     // this callback will be called asynchronously
-        //     // when the response is available
-        //     log.console(data);
-        // }).
-        // error(function(data, status, headers, config) {
-        //     // called asynchronously if an error occurs
-        //     // or server returns response with an error status.
-        // });
+        console.log($scope.clustername);
+        console.log(containerInfoJSONArray)
+        $http({
+            method: 'POST',
+            url: 'http://localhost:3000/cluster/createCluster',
+            data: {"ClusterName" : $scope.clustername, "ContainerList" : containerInfoJSONArray},   // TODO: FIX ME
+            headers: {'Content-Type': 'application/json'}
+        }).success(function(data, status, headers, config) {
+            // this callback will be called asynchronously
+            // when the response is available
+            console.log(data);
+        }).
+        error(function(data, status, headers, config) {
+            // called asynchronously if an error occurs
+            // or server returns response with an error status.
+        });
     };
 });
 
@@ -363,6 +366,10 @@ mainRouter.controller('viewUsageController', function($scope, $http){
     };
 });
 
+mainRouter.controller('viewChartsController', function($scope,$routeParams,$http){
+
+});
+
 mainRouter.controller('imageController', function($scope,$http){
     $scope.showSearchResults = false;
     $scope.downloadSpinnerIcon = {'visibility': 'hidden'};
@@ -423,3 +430,145 @@ mainRouter.controller('loginCtrl', function($scope, $http){
 mainRouter.controller('registerCtrl', function($scope,$http){
     window.location = '#/register';
 });
+
+mainRouter.directive('cpuChart', ['$http', '$routeParams',
+    function ($http,$routeParams) {
+        return {
+            restrict: 'E',
+            replace: true,
+
+            template: '<div id="chartdiv" style="min-width: 310px; height: 400px; margin: 0 auto"></div>',
+            link: function (scope, element, attrs) {
+                var chart = false;
+                /**
+                 * Function that generates data
+                 */
+                function generateChartData() {
+                    var chartData = [];
+                     // $http.get("http://www.w3schools.com/angular/customers.php")
+                     // .then(function (response) {
+                     // if (response.data.records[0].Country == "Germany") {
+                     // var newDate = new Date();
+                     // var visits = Math.round(Math.random() * 40) - 10
+                     // chartData.push({
+                     // date: newDate,
+                     // visits: visits
+                     // });
+                     // }
+                     // console.log("*** generateChartData- visits: " + visits);
+                     // });
+                    console.log($routeParams.containerid )
+                    $http({
+                        method: 'POST',
+                        url: 'http://localhost:3000/crud/getCpuStats',
+                        data: {'ContainerId' : $routeParams.containerid },
+                        headers: {'Content-Type': 'application/json'}
+                    }).success(function (data, status, headers, config) {
+                        // this callback will be called asynchronously
+                        // when the response is available
+                        //$scope.images = data.ImageList;
+                        var newDate = new Date();
+                        chartData.push({
+                            date : newDate,
+                            visits : data.CPU
+                        })
+                    }).error(function (data, status, headers, config) {
+                        // called asynchronously if an error occurs
+                        // or server returns response with an error status.
+                    });
+                    return chartData;
+                }
+
+                var initChart = function () {
+                    console.log($routeParams.containerid )
+                    if (chart) chart.destroy();
+                    var config = scope.config || {};
+                    /**
+                     * Create the chart
+                     */
+                    var chart = AmCharts.makeChart("chartdiv", {
+                        "type": "serial",
+                        "theme": "light",
+                        "zoomOutButton": {
+                            "backgroundColor": '#000000',
+                            "backgroundAlpha": 0.15
+                        },
+                        "dataProvider": generateChartData(),
+                        "categoryField": "date",
+                        "categoryAxis": {
+                            "parseDates": true,
+                            "minPeriod": "ss",
+                            "dashLength": 1,
+                            "gridAlpha": 0.15,
+                            "axisColor": "#DADADA"
+                        },
+                        "graphs": [{
+                            "id": "g1",
+                            "valueField": "visits",
+                            "bullet": "round",
+                            "bulletBorderColor": "#FFFFFF",
+                            "bulletBorderThickness": 2,
+                            "lineThickness": 2,
+                            "lineColor": "#24b506",
+                            "negativeLineColor": "#0352b5",
+                            "hideBulletsCount": 50
+                        }],
+                        "chartCursor": {
+                            "cursorPosition": "mouse"
+                        },
+                        "chartScrollbar": {
+                            "graph": "g1",
+                            "scrollbarHeight": 40,
+                            "color": "#FFFFFF",
+                            "autoGridCount": true
+                        }
+                    })
+
+                    /**
+                     * Set interval to push new data points periodically
+                     */
+                    // set up the chart to update every second
+                    setInterval(function () {
+                        console.log($routeParams.containerid )
+                        // load new datapoints here,
+                        var newDate = new Date();
+                        var visits = -1;
+
+                         // $http.get("http://www.w3schools.com/angular/customers.php")
+                         // .then(function (response) {
+                         // if (response.data.records[0].Country == "Germany") {
+                         // newDate = new Date();
+                         // visits = Math.round(Math.random() * 40) - 10
+                         // chart.dataProvider.push({
+                         // date: newDate,
+                         // visits: visits
+                         // });
+                         // }
+                         // console.log("*** chart.dataProvider- visits: " + visits);
+                         // });
+
+                        $http({
+                            method: 'POST',
+                            url: 'http://localhost:3000/crud/getCpuStats',
+                            data: {'ContainerId' : $routeParams.containerid },
+                            headers: {'Content-Type': 'application/json'}
+                        }).success(function (data, status, headers, config) {
+                            // this callback will be called asynchronously
+                            // when the response is available
+                            var newDate = new Date();
+                            chart.dataProvider.push({
+                                date : newDate,
+                                visits : data.CPU
+                            })
+                        }).error(function (data, status, headers, config) {
+                            // called asynchronously if an error occurs
+                            // or server returns response with an error status.
+                        });
+                        chart.validateData();
+                    }, 1000);
+                };
+                initChart();
+
+            }//end watch
+        }
+    }]);

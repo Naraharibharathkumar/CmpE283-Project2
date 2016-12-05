@@ -21,296 +21,345 @@
 <!--</head>-->
 
 <!--<body ng-app="chartApp" ng-controller="chartCtrl">-->
-<div class="w3-container">
-    <div class="w3-container w3-black w3-left-align w3-allerta">
-        <p class="w3-xlarge w3-text-shadow">Stats</p>
-    </div>
-    <br/>
-    <div class="w3-large">
-        <b>Metric</b> &#128207;:
-        <select ng-model="metric" class="w3-round" ng-change="getSelectedMetric(metric)">
-            <option value="">
-            <option value="cpu">CPU
-            <option value="memory">Memory
-        </select>
-    </div>
-    <br/>
-    <div ng-switch="metric">
-        <div ng-switch-when="cpu">
-            <div class="w3-container w3-white">
-                <cpu-chart></cpu-chart>
-            </div>
+<div class="ng-scope">
+    <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+    <div class="col-sm-2">
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav side-nav">
+                <li class="active">
+                    <a href="javascript:;" data-toggle="collapse" data-target="#cluster"><i class="fa fa-fw fa-wrench"></i> Clusters <i class="fa fa-fw fa-caret-down"></i></a>
+                    <ul id="cluster" class="collapse">
+                        <li>
+                            <a href="#/manageCluster"><i class="fa fa-fw fa-dashboard"></i> Manage Clusters</a>
+                        </li>
+                        <li>
+                            <a href="#/createClusters"><i class="fa fa-fw fa-file"></i> Create Clusters</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:;" data-toggle="collapse" data-target="#container"><i class="fa fa-fw fa-desktop"></i> Containers <i class="fa fa-fw fa-caret-down"></i></a>
+                    <ul id="container" class="collapse">
+                        <li>
+                            <a href="#/manageContainer"><i class="fa fa-fw fa-dashboard"></i> Manage Containers</a>
+                        </li>
+                        <li>
+                            <a href="#/createContainer"><i class="fa fa-fw fa-file"></i> Create Containers</a>
+                        </li>
+                        <li>
+                            <a href="#/monitorContainer"><i class="fa fa-fw fa-bar-chart-o"></i> Monitor Containers</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#/createImage"><i class="fa fa-fw fa-file"></i> Create Image</a>
+                </li>
+                <li>
+                    <a href="#/"><i class="fa fa-fw fa-power-off"></i> LogOut</a>
+                </li>
+            </ul>
         </div>
-        <div ng-switch-when="memory">
-            <div class="w3-container w3-white">
-                <memory-chart></memory-chart>
+    </div>
+    <!-- /.navbar-collapse -->
+    <div class="col-sm-10">
+        <div id="page-wrapper">
+            <div class="container-fluid">
+                <cpu-chart></cpu-chart>
             </div>
         </div>
     </div>
 </div>
-<script>
+<!--<div class="w3-container">-->
+    <!--<div class="w3-container w3-black w3-left-align w3-allerta">-->
+        <!--<p class="w3-xlarge w3-text-shadow">Stats</p>-->
+    <!--</div>-->
+    <!--<br/>-->
+    <!--<div class="w3-large">-->
+        <!--<b>Metric</b> &#128207;:-->
+        <!--<select ng-model="metric" class="w3-round" ng-change="getSelectedMetric(metric)">-->
+            <!--<option value="">-->
+            <!--<option value="cpu">CPU-->
+            <!--<option value="memory">Memory-->
+        <!--</select>-->
+    <!--</div>-->
+    <!--<br/>-->
+    <!--<div ng-switch="metric">-->
+        <!--<div ng-switch-when="cpu">-->
+            <!--<div class="w3-container w3-white">-->
+                <!--<cpu-chart></cpu-chart>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div ng-switch-when="memory">-->
+            <!--<div class="w3-container w3-white">-->
+                <!--<memory-chart></memory-chart>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
 
-    var chartAppVar = angular.module('chartApp', []);
+<!--<script>-->
 
-    chartAppVar.controller('chartCtrl', function ($scope, $http) {
+    <!--var chartAppVar = angular.module('chartApp', []);-->
 
-        $scope.getSelectedMetric = function (item) {
-            if (item == "cpu") {
-            }
-            else if (item == "memory") {
-            }
-        };
-    });
+    <!--chartAppVar.controller('chartCtrl', function ($scope, $http) {-->
 
-    /*CPU Graph*/
-    chartAppVar.directive('cpuChart', ['$http',
-        function ($http) {
-            return {
-                restrict: 'E',
-                replace: true,
+        <!--$scope.getSelectedMetric = function (item) {-->
+            <!--if (item == "cpu") {-->
+            <!--}-->
+            <!--else if (item == "memory") {-->
+            <!--}-->
+        <!--};-->
+    <!--});-->
 
-                template: '<div id="chartdiv" style="min-width: 310px; height: 400px; margin: 0 auto"></div>',
-                link: function (scope, element, attrs) {
+    <!--/*CPU Graph*/-->
+    <!--chartAppVar.directive('cpuChart', ['$http',-->
+        <!--function ($http) {-->
+            <!--return {-->
+                <!--restrict: 'E',-->
+                <!--replace: true,-->
 
-                    var chart = false;
-                    /**
-                     * Function that generates data
-                     */
-                    function generateChartData() {
-                        var chartData = [];
-                        //08caa2ca888bcb0c22b528069be5871495cf3c72b39f656390a560a430952820
-                        /*
-                        $http.get("http://www.w3schools.com/angular/customers.php")
-                            .then(function (response) {
-                                if (response.data.records[0].Country == "Germany") {
-                                    var newDate = new Date();
-                                    var visits = Math.round(Math.random() * 40) - 10
-                                    chartData.push({
-                                        date: newDate,
-                                        visits: visits
-                                    });
-                                }
-                                console.log("*** generateChartData- visits: " + visits);
-                            });
-                        */
-                        $http({
-                            method: 'POST',
-                            url: 'http://localhost:3000/crud/getCpuStats',
-                            data: {'ContainerId' : '08caa2ca888bcb0c22b528069be5871495cf3c72b39f656390a560a430952820'},
-                            headers: {'Content-Type': 'application/json'}
-                        }).success(function (data, status, headers, config) {
-                            // this callback will be called asynchronously
-                            // when the response is available
-                            //$scope.images = data.ImageList;
-                            var newDate = new Date();
-                            chartData.push({
-                                date : newDate,
-                                visits : data.CPU
-                            })
-                        }).error(function (data, status, headers, config) {
-                            // called asynchronously if an error occurs
-                            // or server returns response with an error status.
-                        });
-                        return chartData;
-                    }
+                <!--template: '<div id="chartdiv" style="min-width: 310px; height: 400px; margin: 0 auto"></div>',-->
+                <!--link: function (scope, element, attrs) {-->
 
-                    var initChart = function () {
-                        if (chart) chart.destroy();
-                        var config = scope.config || {};
-                        /**
-                         * Create the chart
-                         */
-                        var chart = AmCharts.makeChart("chartdiv", {
-                            "type": "serial",
-                            "theme": "light",
-                            "zoomOutButton": {
-                                "backgroundColor": '#000000',
-                                "backgroundAlpha": 0.15
-                            },
-                            "dataProvider": generateChartData(),
-                            "categoryField": "date",
-                            "categoryAxis": {
-                                "parseDates": true,
-                                "minPeriod": "ss",
-                                "dashLength": 1,
-                                "gridAlpha": 0.15,
-                                "axisColor": "#DADADA"
-                            },
-                            "graphs": [{
-                                "id": "g1",
-                                "valueField": "visits",
-                                "bullet": "round",
-                                "bulletBorderColor": "#FFFFFF",
-                                "bulletBorderThickness": 2,
-                                "lineThickness": 2,
-                                "lineColor": "#24b506",
-                                "negativeLineColor": "#0352b5",
-                                "hideBulletsCount": 50
-                            }],
-                            "chartCursor": {
-                                "cursorPosition": "mouse"
-                            },
-                            "chartScrollbar": {
-                                "graph": "g1",
-                                "scrollbarHeight": 40,
-                                "color": "#FFFFFF",
-                                "autoGridCount": true
-                            }
-                        })
+                    <!--var chart = false;-->
+                    <!--/**-->
+                     <!--* Function that generates data-->
+                     <!--*/-->
+                    <!--function generateChartData() {-->
+                        <!--var chartData = [];-->
+                        <!--//08caa2ca888bcb0c22b528069be5871495cf3c72b39f656390a560a430952820-->
+                        <!--/*-->
+                        <!--$http.get("http://www.w3schools.com/angular/customers.php")-->
+                            <!--.then(function (response) {-->
+                                <!--if (response.data.records[0].Country == "Germany") {-->
+                                    <!--var newDate = new Date();-->
+                                    <!--var visits = Math.round(Math.random() * 40) - 10-->
+                                    <!--chartData.push({-->
+                                        <!--date: newDate,-->
+                                        <!--visits: visits-->
+                                    <!--});-->
+                                <!--}-->
+                                <!--console.log("*** generateChartData- visits: " + visits);-->
+                            <!--});-->
+                        <!--*/-->
+                        <!--$http({-->
+                            <!--method: 'POST',-->
+                            <!--url: 'http://localhost:3000/crud/getCpuStats',-->
+                            <!--data: {'ContainerId' : '08caa2ca888bcb0c22b528069be5871495cf3c72b39f656390a560a430952820'},-->
+                            <!--headers: {'Content-Type': 'application/json'}-->
+                        <!--}).success(function (data, status, headers, config) {-->
+                            <!--// this callback will be called asynchronously-->
+                            <!--// when the response is available-->
+                            <!--//$scope.images = data.ImageList;-->
+                            <!--var newDate = new Date();-->
+                            <!--chartData.push({-->
+                                <!--date : newDate,-->
+                                <!--visits : data.CPU-->
+                            <!--})-->
+                        <!--}).error(function (data, status, headers, config) {-->
+                            <!--// called asynchronously if an error occurs-->
+                            <!--// or server returns response with an error status.-->
+                        <!--});-->
+                        <!--return chartData;-->
+                    <!--}-->
 
-                        /**
-                         * Set interval to push new data points periodically
-                         */
-                        // set up the chart to update every second
-                        setInterval(function () {
-                            // load new datapoints here,
-                            var newDate = new Date();
-                            var visits = -1;
-                            /*
-                            $http.get("http://www.w3schools.com/angular/customers.php")
-                                .then(function (response) {
-                                    if (response.data.records[0].Country == "Germany") {
-                                        newDate = new Date();
-                                        visits = Math.round(Math.random() * 40) - 10
-                                        chart.dataProvider.push({
-                                            date: newDate,
-                                            visits: visits
-                                        });
-                                    }
-                                    console.log("*** chart.dataProvider- visits: " + visits);
-                                });
-                                */
-                            $http({
-                                method: 'POST',
-                                url: 'http://localhost:3000/crud/getCpuStats',
-                                data: {'ContainerId' : '08caa2ca888bcb0c22b528069be5871495cf3c72b39f656390a560a430952820'},
-                                headers: {'Content-Type': 'application/json'}
-                            }).success(function (data, status, headers, config) {
-                                // this callback will be called asynchronously
-                                // when the response is available
-                                //$scope.images = data.ImageList;
-                                var newDate = new Date();
-                                chart.dataProvider.push({
-                                    date : newDate,
-                                    visits : data.CPU
-                                })
-                            }).error(function (data, status, headers, config) {
-                                // called asynchronously if an error occurs
-                                // or server returns response with an error status.
-                            });
-                            chart.validateData();
-                        }, 1000);
-                    };
-                    initChart();
+                    <!--var initChart = function () {-->
+                        <!--if (chart) chart.destroy();-->
+                        <!--var config = scope.config || {};-->
+                        <!--/**-->
+                         <!--* Create the chart-->
+                         <!--*/-->
+                        <!--var chart = AmCharts.makeChart("chartdiv", {-->
+                            <!--"type": "serial",-->
+                            <!--"theme": "light",-->
+                            <!--"zoomOutButton": {-->
+                                <!--"backgroundColor": '#000000',-->
+                                <!--"backgroundAlpha": 0.15-->
+                            <!--},-->
+                            <!--"dataProvider": generateChartData(),-->
+                            <!--"categoryField": "date",-->
+                            <!--"categoryAxis": {-->
+                                <!--"parseDates": true,-->
+                                <!--"minPeriod": "ss",-->
+                                <!--"dashLength": 1,-->
+                                <!--"gridAlpha": 0.15,-->
+                                <!--"axisColor": "#DADADA"-->
+                            <!--},-->
+                            <!--"graphs": [{-->
+                                <!--"id": "g1",-->
+                                <!--"valueField": "visits",-->
+                                <!--"bullet": "round",-->
+                                <!--"bulletBorderColor": "#FFFFFF",-->
+                                <!--"bulletBorderThickness": 2,-->
+                                <!--"lineThickness": 2,-->
+                                <!--"lineColor": "#24b506",-->
+                                <!--"negativeLineColor": "#0352b5",-->
+                                <!--"hideBulletsCount": 50-->
+                            <!--}],-->
+                            <!--"chartCursor": {-->
+                                <!--"cursorPosition": "mouse"-->
+                            <!--},-->
+                            <!--"chartScrollbar": {-->
+                                <!--"graph": "g1",-->
+                                <!--"scrollbarHeight": 40,-->
+                                <!--"color": "#FFFFFF",-->
+                                <!--"autoGridCount": true-->
+                            <!--}-->
+                        <!--})-->
 
-                }//end watch
-            }
-        }]);
+                        <!--/**-->
+                         <!--* Set interval to push new data points periodically-->
+                         <!--*/-->
+                        <!--// set up the chart to update every second-->
+                        <!--setInterval(function () {-->
+                            <!--// load new datapoints here,-->
+                            <!--var newDate = new Date();-->
+                            <!--var visits = -1;-->
+                            <!--/*-->
+                            <!--$http.get("http://www.w3schools.com/angular/customers.php")-->
+                                <!--.then(function (response) {-->
+                                    <!--if (response.data.records[0].Country == "Germany") {-->
+                                        <!--newDate = new Date();-->
+                                        <!--visits = Math.round(Math.random() * 40) - 10-->
+                                        <!--chart.dataProvider.push({-->
+                                            <!--date: newDate,-->
+                                            <!--visits: visits-->
+                                        <!--});-->
+                                    <!--}-->
+                                    <!--console.log("*** chart.dataProvider- visits: " + visits);-->
+                                <!--});-->
+                                <!--*/-->
+                            <!--$http({-->
+                                <!--method: 'POST',-->
+                                <!--url: 'http://localhost:3000/crud/getCpuStats',-->
+                                <!--data: {'ContainerId' : '08caa2ca888bcb0c22b528069be5871495cf3c72b39f656390a560a430952820'},-->
+                                <!--headers: {'Content-Type': 'application/json'}-->
+                            <!--}).success(function (data, status, headers, config) {-->
+                                <!--// this callback will be called asynchronously-->
+                                <!--// when the response is available-->
+                                <!--//$scope.images = data.ImageList;-->
+                                <!--var newDate = new Date();-->
+                                <!--chart.dataProvider.push({-->
+                                    <!--date : newDate,-->
+                                    <!--visits : data.CPU-->
+                                <!--})-->
+                            <!--}).error(function (data, status, headers, config) {-->
+                                <!--// called asynchronously if an error occurs-->
+                                <!--// or server returns response with an error status.-->
+                            <!--});-->
+                            <!--chart.validateData();-->
+                        <!--}, 1000);-->
+                    <!--};-->
+                    <!--initChart();-->
 
-    /*Memory Graph*/
-    chartAppVar.directive('memoryChart',['$http',
-        function ($http) {
-            return {
-                restrict: 'E',
-                replace: true,
+                <!--}//end watch-->
+            <!--}-->
+        <!--}]);-->
 
-                template: '<div id="chartdiv" style="min-width: 310px; height: 400px; margin: 0 auto"></div>',
-                link: function (scope, element, attrs) {
+    <!--/*Memory Graph*/-->
+    <!--chartAppVar.directive('memoryChart',['$http',-->
+        <!--function ($http) {-->
+            <!--return {-->
+                <!--restrict: 'E',-->
+                <!--replace: true,-->
 
-                    var chart = false;
-                    /**
-                     * Function that generates data
-                     */
-                    function generateChartData() {
-                        var chartData = [];
+                <!--template: '<div id="chartdiv" style="min-width: 310px; height: 400px; margin: 0 auto"></div>',-->
+                <!--link: function (scope, element, attrs) {-->
 
-                        $http.get("http://www.w3schools.com/angular/customers.php")
-                            .then(function (response) {
-                                if (response.data.records[0].Country == "Germany") {
-                                    var newDate = new Date();
-                                    var visits = Math.round(Math.random() * 40) - 10;
-                                    chartData.push({
-                                        date: newDate,
-                                        visits: visits
-                                    });
-                                }
-                                console.log("*** generateChartData- visits: " + visits);
-                            });
+                    <!--var chart = false;-->
+                    <!--/**-->
+                     <!--* Function that generates data-->
+                     <!--*/-->
+                    <!--function generateChartData() {-->
+                        <!--var chartData = [];-->
 
-                        return chartData;
-                    }
+                        <!--$http.get("http://www.w3schools.com/angular/customers.php")-->
+                            <!--.then(function (response) {-->
+                                <!--if (response.data.records[0].Country == "Germany") {-->
+                                    <!--var newDate = new Date();-->
+                                    <!--var visits = Math.round(Math.random() * 40) - 10;-->
+                                    <!--chartData.push({-->
+                                        <!--date: newDate,-->
+                                        <!--visits: visits-->
+                                    <!--});-->
+                                <!--}-->
+                                <!--console.log("*** generateChartData- visits: " + visits);-->
+                            <!--});-->
 
-                    var initChart = function () {
-                        if (chart) chart.destroy();
-                        var config = scope.config || {};
-                        /**
-                         * Create the chart
-                         */
-                        var chart = AmCharts.makeChart("chartdiv", {
-                            "type": "serial",
-                            "theme": "light",
-                            "zoomOutButton": {
-                                "backgroundColor": '#000000',
-                                "backgroundAlpha": 0.15
-                            },
-                            "dataProvider": generateChartData(),
-                            "categoryField": "date",
-                            "categoryAxis": {
-                                "parseDates": true,
-                                "minPeriod": "ss",
-                                "dashLength": 1,
-                                "gridAlpha": 0.15,
-                                "axisColor": "#DADADA"
-                            },
-                            "graphs": [{
-                                "id": "g1",
-                                "valueField": "visits",
-                                "bullet": "round",
-                                "bulletBorderColor": "#FFFFFF",
-                                "bulletBorderThickness": 2,
-                                "lineThickness": 2,
-                                "lineColor": "#b5111d",
-                                "negativeLineColor": "#dae143",
-                                "hideBulletsCount": 50
-                            }],
-                            "chartCursor": {
-                                "cursorPosition": "mouse"
-                            },
-                            "chartScrollbar": {
-                                "graph": "g1",
-                                "scrollbarHeight": 40,
-                                "color": "#FFFFFF",
-                                "autoGridCount": true
-                            }
-                        })
+                        <!--return chartData;-->
+                    <!--}-->
 
-                        /**
-                         * Set interval to push new data points periodically
-                         */
-                        // set up the chart to update every second
-                        setInterval(function () {
-                            // load new datapoints here,
-                            var newDate = new Date();
-                            var visits = -1;
-                            $http.get("http://www.w3schools.com/angular/customers.php")
-                                .then(function (response) {
-                                    if (response.data.records[0].Country == "Germany") {
-                                        newDate = new Date();
-                                        visits = Math.round(Math.random() * 40) - 10
-                                        chart.dataProvider.push({
-                                            date: newDate,
-                                            visits: visits
-                                        });
-                                    }
-                                    console.log("*** chart.dataProvider- visits: " + visits);
-                                });
-                            chart.validateData();
-                        }, 1000);
-                    };
-                    initChart();
+                    <!--var initChart = function () {-->
+                        <!--if (chart) chart.destroy();-->
+                        <!--var config = scope.config || {};-->
+                        <!--/**-->
+                         <!--* Create the chart-->
+                         <!--*/-->
+                        <!--var chart = AmCharts.makeChart("chartdiv", {-->
+                            <!--"type": "serial",-->
+                            <!--"theme": "light",-->
+                            <!--"zoomOutButton": {-->
+                                <!--"backgroundColor": '#000000',-->
+                                <!--"backgroundAlpha": 0.15-->
+                            <!--},-->
+                            <!--"dataProvider": generateChartData(),-->
+                            <!--"categoryField": "date",-->
+                            <!--"categoryAxis": {-->
+                                <!--"parseDates": true,-->
+                                <!--"minPeriod": "ss",-->
+                                <!--"dashLength": 1,-->
+                                <!--"gridAlpha": 0.15,-->
+                                <!--"axisColor": "#DADADA"-->
+                            <!--},-->
+                            <!--"graphs": [{-->
+                                <!--"id": "g1",-->
+                                <!--"valueField": "visits",-->
+                                <!--"bullet": "round",-->
+                                <!--"bulletBorderColor": "#FFFFFF",-->
+                                <!--"bulletBorderThickness": 2,-->
+                                <!--"lineThickness": 2,-->
+                                <!--"lineColor": "#b5111d",-->
+                                <!--"negativeLineColor": "#dae143",-->
+                                <!--"hideBulletsCount": 50-->
+                            <!--}],-->
+                            <!--"chartCursor": {-->
+                                <!--"cursorPosition": "mouse"-->
+                            <!--},-->
+                            <!--"chartScrollbar": {-->
+                                <!--"graph": "g1",-->
+                                <!--"scrollbarHeight": 40,-->
+                                <!--"color": "#FFFFFF",-->
+                                <!--"autoGridCount": true-->
+                            <!--}-->
+                        <!--})-->
 
-                }//end watch
-            }
-        }]);
-</script>
-</body>
+                        <!--/**-->
+                         <!--* Set interval to push new data points periodically-->
+                         <!--*/-->
+                        <!--// set up the chart to update every second-->
+                        <!--setInterval(function () {-->
+                            <!--// load new datapoints here,-->
+                            <!--var newDate = new Date();-->
+                            <!--var visits = -1;-->
+                            <!--$http.get("http://www.w3schools.com/angular/customers.php")-->
+                                <!--.then(function (response) {-->
+                                    <!--if (response.data.records[0].Country == "Germany") {-->
+                                        <!--newDate = new Date();-->
+                                        <!--visits = Math.round(Math.random() * 40) - 10-->
+                                        <!--chart.dataProvider.push({-->
+                                            <!--date: newDate,-->
+                                            <!--visits: visits-->
+                                        <!--});-->
+                                    <!--}-->
+                                    <!--console.log("*** chart.dataProvider- visits: " + visits);-->
+                                <!--});-->
+                            <!--chart.validateData();-->
+                        <!--}, 1000);-->
+                    <!--};-->
+                    <!--initChart();-->
+
+                <!--}//end watch-->
+            <!--}-->
+        <!--}]);-->
+<!--</script>-->
+<!--</body>-->

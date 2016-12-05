@@ -100,10 +100,14 @@ router.post('/getClusters', function (req, res, next) {
 router.post('/createCluster', function(req, res, next){
     var clusterName = req.body.ClusterName;
     var containerList = req.body.ContainerList;
+    console.log(clusterName);
+    console.log(containerList);
     if(typeof(clusterName) != 'undefined'  && clusterName.length > 0) {
         try{
             var url = 'cat decking.json';
             exec(url, hostinfo, function (err, stdout, stderr) {
+                var nullException = [];
+                var breakException = {};
                 try{
                     if(stdout==''){
                         res.setHeader('Content-Type', 'application/json');
@@ -112,37 +116,30 @@ router.post('/createCluster', function(req, res, next){
                     }
                     else {
                         stdout = JSON.parse(stdout);
-                        if(err!=null){
-                            var clusterList = Object.keys(stdout.clusters);
-                            var nullException = [];
-                            var breakException = {};
-                            if(clusterList.length==0){
-                                throw nullException;
-                            }
-                            else{
-                                clusterList.forEach(function (cluster) {
-                                    if(cluster==clusterName){
-                                        throw breakException;
-                                    }
-                                });
-                                throw nullException;
-                            }
+                        var clusterList = Object.keys(stdout.clusters);
+                        if(clusterList.length==0){
+                            throw nullException;
                         }
                         else{
-                            throw err;
+                            clusterList.forEach(function (cluster) {
+                                if(cluster==clusterName){
+                                    throw breakException;
+                                }
+                            });
+                            throw nullException;
                         }
                     }
                 }
                 catch(exe){
                     if(exe==nullException){
-                        var containersList = Object.keys(stdout.containers);
+                        var clusterContainersList = Object.keys(stdout.containers);
                         var xy = [];
                         containerList.forEach(function (container) {
                             var value = container.Count;
                             for(var i = 1; i<=value; i++){
                                 (function(i) {
                                     var tempName = container.Name + i;
-                                    if(containersList.indexOf(tempName) > -1){
+                                    if(clusterContainersList.indexOf(tempName) > -1){
 
                                     }
                                     else{
@@ -153,10 +150,11 @@ router.post('/createCluster', function(req, res, next){
                             }
                         });
                         stdout.clusters[clusterName] = xy;
+                        console.log(stdout);
                         var execUrl = 'echo \''+JSON.stringify(stdout)+'\' > decking.json';
                         exec(execUrl, hostinfo, function(err3, stdout3, stderr3){
                             var finalUrl = 'decking create '+clusterName;
-                            exec(execUrl, hostinfo, function(err4, stdout4, stderr4){
+                            exec(finalUrl, hostinfo, function(err4, stdout4, stderr4){
                                 res.setHeader('Content-Type', 'application/json');
                                 res.status(200);
                                 res.send({"Message" : "Cluster Created"});
@@ -222,7 +220,6 @@ router.post('/startCluster', function (req, res, next) {
                         catch(ex){
                             if(ex==breakException){
                                 var execUrl ='decking start '+clusterName;
-                                console.log(execUrl)
                                 exec(execUrl, hostinfo, function(err1, stdout1, stderr1){
                                     res.setHeader('Content-Type', 'application/json');
                                     res.status(200);
