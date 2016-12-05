@@ -205,16 +205,9 @@ router.post('/startContainer', function(req, res, next){
         var url = 'curl -XPOST http://127.0.0.1:2375/containers/'+containerId+'/start';
         try{
             exec( url , hostinfo, function (err, stdout, stderr) {
-                if(stdout==''){
-                    res.setHeader('Content-Type', 'application/json');
-                    res.status(450);
-                    res.send({});
-                }
-                else{
                     res.setHeader('Content-Type', 'application/json');
                     res.status(200);
                     res.send(stdout);
-                }
             });
         }
         catch(ex){
@@ -233,20 +226,14 @@ router.post('/startContainer', function(req, res, next){
 //Stop the Container
 router.post('/stopContainer', function(req, res, next){
     var containerId = req.body.ContainerId;
+    console.log(containerId)
     if(typeof(containerId) != 'undefined'  && containerId.length > 0) {
         var url = 'curl -XPOST http://127.0.0.1:2375/containers/'+containerId+'/stop';
         try{
             exec( url , hostinfo, function (err, stdout, stderr) {
-                if(stdout==''){
-                    res.setHeader('Content-Type', 'application/json');
-                    res.status(450);
-                    res.send({});
-                }
-                else{
-                    res.setHeader('Content-Type', 'application/json');
-                    res.status(200);
-                    res.send(stdout.substring(0,stdout.length-1));
-                }
+                res.setHeader('Content-Type', 'application/json');
+                res.status(200);
+                res.send(stdout.substring(0,stdout.length-1));
             });
         }
         catch(ex){
@@ -269,16 +256,9 @@ router.post('/removeContainer', function(req, res, next){
         var url = 'curl -X DELETE http://127.0.0.1:2375/containers/'+containerId;
         try{
             exec( url , hostinfo , function (err, stdout, stderr) {
-                if(stdout==''){
-                    res.setHeader('Content-Type', 'application/json');
-                    res.status(450);
-                    res.send({});
-                }
-                else {
                     res.setHeader('Content-Type', 'application/json');
                     res.status(200);
                     res.send(stdout);
-                }
             });
         }
         catch(ex){
@@ -389,18 +369,11 @@ router.post('/getNetworkStats', function (req, res, next) {
         try{
             var url = 'echo -e "GET /containers/'+containerId+'/stats?stream=0 HTTP/1.0\r\n" | nc -q -1 -U /var/run/docker.sock | tail -1'
             exec(url, hostinfo, function (er, stdout, stderr) {
-                if(stdout==''){
-                    res.setHeader('Content-Type', 'application/json');
-                    res.status(450);
-                    res.send({"Network" : {}});
-                }
-                else {
                     stdout = stdout.substring(0, stdout.length -1);
                     stdout = JSON.parse(stdout);
                     res.setHeader('Content-Type', 'application/json');
                     res.status(200);
                     res.send({"Network" : stdout});
-                }
             });
         }
         catch(err){

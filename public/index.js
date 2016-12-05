@@ -50,14 +50,9 @@ mainRouter.controller('manageClusterController', function ($scope, $http) {
         data: {},
         headers: {'Content-Type': 'application/json'}
     }).success(function (data, status, headers, config) {
-        // this callback will be called asynchronously
-        // when the response is available
         $scope.clusters = data.ClusterList;
     }).error(function (data, status, headers, config) {
-        // called asynchronously if an error occurs
-        // or server returns response with an error status.
     });
-    /*For each cluster check the status {{c.status}} attribute in ng-if and set the right icons*/
 
     $scope.editCluster = function (status, clusterName) {
         if (status == 'start') {
@@ -67,8 +62,6 @@ mainRouter.controller('manageClusterController', function ($scope, $http) {
                 data: {"ClusterName": clusterName},
                 headers: {'Content-Type': 'application/json'}
             }).success(function (data, status, headers, config) {
-                // this callback will be called asynchronously
-                // when the response is available
                 if (status == '200') {
                     $http({
                         method: 'POST',
@@ -76,17 +69,11 @@ mainRouter.controller('manageClusterController', function ($scope, $http) {
                         data: {},
                         headers: {'Content-Type': 'application/json'}
                     }).success(function (data, status, headers, config) {
-                        // this callback will be called asynchronously
-                        // when the response is available
                         $scope.clusters = data.ClusterList;
                     }).error(function (data, status, headers, config) {
-                        // called asynchronously if an error occurs
-                        // or server returns response with an error status.
                     });
                 }
             }).error(function (data, status, headers, config) {
-                // called asynchronously if an error occurs
-                // or server returns response with an error status.
             });
         } else if (status == 'stop') {
             /*TODO: http request to server*/
@@ -96,8 +83,6 @@ mainRouter.controller('manageClusterController', function ($scope, $http) {
                 data: {"ClusterName": clusterName},
                 headers: {'Content-Type': 'application/json'}
             }).success(function (data, status, headers, config) {
-                // this callback will be called asynchronously
-                // when the response is available
                 if (status == '200') {
                     $http({
                         method: 'POST',
@@ -105,17 +90,11 @@ mainRouter.controller('manageClusterController', function ($scope, $http) {
                         data: {},
                         headers: {'Content-Type': 'application/json'}
                     }).success(function (data, status, headers, config) {
-                        // this callback will be called asynchronously
-                        // when the response is available
                         $scope.clusters = data.ClusterList;
                     }).error(function (data, status, headers, config) {
-                        // called asynchronously if an error occurs
-                        // or server returns response with an error status.
                     });
                 }
             }).error(function (data, status, headers, config) {
-                // called asynchronously if an error occurs
-                // or server returns response with an error status.
             });
         } else if (status == 'delete') {
             /*TODO: http request to server*/
@@ -125,8 +104,6 @@ mainRouter.controller('manageClusterController', function ($scope, $http) {
                 data: {"ClusterName": clusterName},
                 headers: {'Content-Type': 'application/json'}
             }).success(function (data, status, headers, config) {
-                // this callback will be called asynchronously
-                // when the response is available
                 if (status == '200') {
                     $http({
                         method: 'POST',
@@ -134,19 +111,14 @@ mainRouter.controller('manageClusterController', function ($scope, $http) {
                         data: {},
                         headers: {'Content-Type': 'application/json'}
                     }).success(function (data, status, headers, config) {
-                        // this callback will be called asynchronously
-                        // when the response is available
                         $scope.clusters = data.ClusterList;
                     }).error(function (data, status, headers, config) {
-                        // called asynchronously if an error occurs
-                        // or server returns response with an error status.
                     });
                 }
             }).error(function (data, status, headers, config) {
-                // called asynchronously if an error occurs
-                // or server returns response with an error status.
             });
-        } else if (status == 'restart') {
+        }
+        else if (status == 'restart') {
             /*TODO: http request to server*/
             $http({
                 method: 'POST',
@@ -154,8 +126,6 @@ mainRouter.controller('manageClusterController', function ($scope, $http) {
                 data: {"ClusterName": clusterName},
                 headers: {'Content-Type': 'application/json'}
             }).success(function (data, status, headers, config) {
-                // this callback will be called asynchronously
-                // when the response is available
                 if (status == '200') {
                     $http({
                         method: 'POST',
@@ -163,17 +133,11 @@ mainRouter.controller('manageClusterController', function ($scope, $http) {
                         data: {},
                         headers: {'Content-Type': 'application/json'}
                     }).success(function (data, status, headers, config) {
-                        // this callback will be called asynchronously
-                        // when the response is available
                         $scope.clusters = data.ClusterList;
                     }).error(function (data, status, headers, config) {
-                        // called asynchronously if an error occurs
-                        // or server returns response with an error status.
                     });
                 }
             }).error(function (data, status, headers, config) {
-                // called asynchronously if an error occurs
-                // or server returns response with an error status.
             });
         }
     };
@@ -197,31 +161,21 @@ mainRouter.controller('createClusterController', function ($scope, $http) {
         data: {},   // TODO: FIX ME
         headers: {'Content-Type': 'application/json'}
     }).success(function (data, status, headers, config) {
-        // this callback will be called asynchronously
-        // when the response is available
-        //console.log(response.data.ImageList);
         $scope.images = data.ImageList;
     }).error(function (data, status, headers, config) {
-        // called asynchronously if an error occurs
-        // or server returns response with an error status.
     });
 
     // add container counts
     $scope.numberChanged = function (imageName, count) {
-        console.log(imageName + "--- " + count);
         if (count == 0) {
-            // remove from the map
             delete $scope.countMap[imageName];
         } else {
-            // add or modify the map
             $scope.countMap[imageName] = count;
         }
     }
 
     // store container names
     $scope.containerNameChanged = function (imageName, cName) {
-        // add or modify the map
-        console.log(imageName + "**** " + cName);
         $scope.nameMap[imageName] = cName;
     }
 
@@ -232,35 +186,24 @@ mainRouter.controller('createClusterController', function ($scope, $http) {
             var contName = "noname";
             var contNum = 0;
             if ($scope.countMap.hasOwnProperty(key)) {
-                console.log(key + " -> " + $scope.countMap[key]);
                 contNum = $scope.countMap[key];
             }
 
             if ($scope.nameMap.hasOwnProperty(key)) {
-                console.log(key + " -> " + $scope.nameMap[key]);
                 contName = $scope.nameMap[key];
             }
 
             var containerInfoJson = new ContainerInfo(key,contName,contNum);
-            console.log(containerInfoJson)
             containerInfoJSONArray.push(containerInfoJson);
-            console.log("cluster name: " + $scope.clustername);
         }
-        console.log($scope.clustername);
-        console.log(containerInfoJSONArray)
         $http({
             method: 'POST',
             url: 'http://localhost:3000/cluster/createCluster',
             data: {"ClusterName" : $scope.clustername, "ContainerList" : containerInfoJSONArray},   // TODO: FIX ME
             headers: {'Content-Type': 'application/json'}
         }).success(function(data, status, headers, config) {
-            // this callback will be called asynchronously
-            // when the response is available
-            console.log(data);
         }).
         error(function(data, status, headers, config) {
-            // called asynchronously if an error occurs
-            // or server returns response with an error status.
         });
     };
 });
@@ -272,26 +215,18 @@ mainRouter.controller('manageContainerController', function ($scope, $http) {
             data: {},
             headers: {'Content-Type': 'application/json'}
         }).success(function (data, status, headers, config) {
-            // this callback will be called asynchronously
-            // when the response is available
             $scope.containers = data.ContainerList;
         }).error(function (data, status, headers, config) {
-            // called asynchronously if an error occurs
-            // or server returns response with an error status.
         });
-
-        /*For each container check the status {{c.status}} attribute in ng-if and set the right icons*/
 
         $scope.editContainer = function (status, cId) {
             if (status == 'start') {
                 $http({
                     method: 'POST',
-                    url: 'http://localhost:3000/cluster/startContainer',
+                    url: 'http://localhost:3000/crud/startContainer',
                     data: {"ContainerId": cId},
                     headers: {'Content-Type': 'application/json'}
                 }).success(function (data, status, headers, config) {
-                    // this callback will be called asynchronously
-                    // when the response is available
                     if (status == '200') {
                         $http({
                             method: 'POST',
@@ -299,27 +234,19 @@ mainRouter.controller('manageContainerController', function ($scope, $http) {
                             data: {},
                             headers: {'Content-Type': 'application/json'}
                         }).success(function (data, status, headers, config) {
-                            // this callback will be called asynchronously
-                            // when the response is available
                             $scope.containers = data.ContainerList;
                         }).error(function (data, status, headers, config) {
-                            // called asynchronously if an error occurs
-                            // or server returns response with an error status.
                         });
                     }
                 }).error(function (data, status, headers, config) {
-                    // called asynchronously if an error occurs
-                    // or server returns response with an error status.
                 });
             } else if (status == 'stop') {
                 $http({
                     method: 'POST',
-                    url: 'http://localhost:3000/cluster/stopContainer',
+                    url: 'http://localhost:3000/crud/stopContainer',
                     data: {"ContainerId": cId},
                     headers: {'Content-Type': 'application/json'}
                 }).success(function (data, status, headers, config) {
-                    // this callback will be called asynchronously
-                    // when the response is available
                     if (status == '200') {
                         $http({
                             method: 'POST',
@@ -327,27 +254,19 @@ mainRouter.controller('manageContainerController', function ($scope, $http) {
                             data: {},
                             headers: {'Content-Type': 'application/json'}
                         }).success(function (data, status, headers, config) {
-                            // this callback will be called asynchronously
-                            // when the response is available
                             $scope.containers = data.ContainerList;
                         }).error(function (data, status, headers, config) {
-                            // called asynchronously if an error occurs
-                            // or server returns response with an error status.
                         });
                     }
                 }).error(function (data, status, headers, config) {
-                    // called asynchronously if an error occurs
-                    // or server returns response with an error status.
                 });
             } else if (status == 'delete') {
                 $http({
                     method: 'POST',
-                    url: 'http://localhost:3000/cluster/removeContainer',
+                    url: 'http://localhost:3000/crud/removeContainer',
                     data: {"ContainerId": cId},
                     headers: {'Content-Type': 'application/json'}
                 }).success(function (data, status, headers, config) {
-                    // this callback will be called asynchronously
-                    // when the response is available
                     if (status == '200') {
                         $http({
                             method: 'POST',
@@ -355,27 +274,19 @@ mainRouter.controller('manageContainerController', function ($scope, $http) {
                             data: {},
                             headers: {'Content-Type': 'application/json'}
                         }).success(function (data, status, headers, config) {
-                            // this callback will be called asynchronously
-                            // when the response is available
                             $scope.containers = data.ContainerList;
                         }).error(function (data, status, headers, config) {
-                            // called asynchronously if an error occurs
-                            // or server returns response with an error status.
                         });
                     }
                 }).error(function (data, status, headers, config) {
-                    // called asynchronously if an error occurs
-                    // or server returns response with an error status.
                 });
             } else if (status == 'restart') {
                 $http({
                     method: 'POST',
-                    url: 'http://localhost:3000/cluster/stopContainer',
+                    url: 'http://localhost:3000/crud/stopContainer',
                     data: {"ContainerId": cId},
                     headers: {'Content-Type': 'application/json'}
                 }).success(function (data, status, headers, config) {
-                    // this callback will be called asynchronously
-                    // when the response is available
                     if (status == '200') {
                         $http({
                             method: 'POST',
@@ -383,29 +294,21 @@ mainRouter.controller('manageContainerController', function ($scope, $http) {
                             data: {},
                             headers: {'Content-Type': 'application/json'}
                         }).success(function (data, status, headers, config) {
-                            // this callback will be called asynchronously
-                            // when the response is available
                             $scope.containers = data.ContainerList;
                         }).error(function (data, status, headers, config) {
-                            // called asynchronously if an error occurs
-                            // or server returns response with an error status.
                         });
                     }
                 }).error(function (data, status, headers, config) {
-                    // called asynchronously if an error occurs
-                    // or server returns response with an error status.
                 });
 
                 /*start*/
                 if (status == 'start') {
                     $http({
                         method: 'POST',
-                        url: 'http://localhost:3000/cluster/startContainer',
+                        url: 'http://localhost:3000/crud/startContainer',
                         data: {"ContainerId": cId},
                         headers: {'Content-Type': 'application/json'}
                     }).success(function (data, status, headers, config) {
-                        // this callback will be called asynchronously
-                        // when the response is available
                         if (status == '200') {
                             $http({
                                 method: 'POST',
@@ -413,17 +316,11 @@ mainRouter.controller('manageContainerController', function ($scope, $http) {
                                 data: {},
                                 headers: {'Content-Type': 'application/json'}
                             }).success(function (data, status, headers, config) {
-                                // this callback will be called asynchronously
-                                // when the response is available
                                 $scope.containers = data.ContainerList;
                             }).error(function (data, status, headers, config) {
-                                // called asynchronously if an error occurs
-                                // or server returns response with an error status.
                             });
                         }
                     }).error(function (data, status, headers, config) {
-                        // called asynchronously if an error occurs
-                        // or server returns response with an error status.
                     });
                 }
             }
@@ -441,12 +338,8 @@ mainRouter.controller('createContainerController', function ($scope, $http) {
         data: {},
         headers: {'Content-Type': 'application/json'}
     }).success(function (data, status, headers, config) {
-        // this callback will be called asynchronously
-        // when the response is available
         $scope.images = data.ImageList;
     }).error(function (data, status, headers, config) {
-        // called asynchronously if an error occurs
-        // or server returns response with an error status.
     });
 
 
@@ -458,13 +351,7 @@ mainRouter.controller('createContainerController', function ($scope, $http) {
             data: {'ContainerName': name, 'ContainerTag': tag},
             headers: {'Content-Type': 'application/json'}
         }).success(function (data, status, headers, config) {
-            // this callback will be called asynchronously
-            // when the response is available
-            //$scope.images = data.ImageList;
-            alert(data.Id);
         }).error(function (data, status, headers, config) {
-            // called asynchronously if an error occurs
-            // or server returns response with an error status.
         });
     };
 });
@@ -476,27 +363,9 @@ mainRouter.controller('viewUsageController', function ($scope, $http) {
         data: {},
         headers: {'Content-Type': 'application/json'}
     }).success(function (data, status, headers, config) {
-        // this callback will be called asynchronously
-        // when the response is available
         $scope.containers = data.ContainerList;
     }).error(function (data, status, headers, config) {
-        // called asynchronously if an error occurs
-        // or server returns response with an error status.
     });
-    /* TODO
-     /*For each container check the status {{c.status}} attribute in ng-if and set the right icons*/
-
-    $scope.editContainer = function (status) {
-        if (status == 'start') {
-            /*TODO: http request to server*/
-        } else if (status == 'stop') {
-            /*TODO: http request to server*/
-        } else if (status == 'delete') {
-            /*TODO: http request to server*/
-        } else if (status == 'restart') {
-            /*TODO: http request to server*/
-        }
-    };
 });
 
 mainRouter.controller('viewChartsController', function($scope,$routeParams,$http){
@@ -504,11 +373,9 @@ mainRouter.controller('viewChartsController', function($scope,$routeParams,$http
 });
 
 mainRouter.controller('imageController', function($scope,$http){
-
     $scope.showSearchResults = false;
     $scope.downloadSpinnerIcon = {'visibility': 'hidden'};
     $scope.searchSpinnerIcon = {'visibility': 'hidden'};
-
     $scope.searchImage = function () {
         $scope.showSearchResults = true;
         $http({
@@ -517,13 +384,8 @@ mainRouter.controller('imageController', function($scope,$http){
             data: {'ContainerName': $scope.imagename},
             headers: {'Content-Type': 'application/json'}
         }).success(function (data, status, headers, config) {
-            // this callback will be called asynchronously
-            // when the response is available
             $scope.images = data;
-            log.console(data);
         }).error(function (data, status, headers, config) {
-            // called asynchronously if an error occurs
-            // or server returns response with an error status.
         });
     };
 
@@ -534,14 +396,8 @@ mainRouter.controller('imageController', function($scope,$http){
             data: {'ContainerName': name, 'ContainerTag': tag},
             headers: {'Content-Type': 'application/json'}
         }).success(function (data, status, headers, config) {
-            // this callback will be called asynchronously
-            // when the response is available
-            //$scope.images = data;
-            //log.console(data);
             alert(data);
         }).error(function (data, status, headers, config) {
-            // called asynchronously if an error occurs
-            // or server returns response with an error status.
             alert("ERROR in Creating Image");
         });
     }
@@ -554,9 +410,7 @@ mainRouter.controller('loginCtrl', function ($scope, $http) {
             window.location = '#/manageCluster';
         }
         else {
-            //$cookies.put('userId', 'Hello');
-            //console.log($cookies.get('userId'));
-            window.location = '#/home';
+            window.location = '#/manageCluster';
         }
     }
 });
@@ -579,36 +433,18 @@ mainRouter.directive('cpuChart', ['$http', '$routeParams',
                  */
                 function generateChartData() {
                     var chartData = [];
-                     // $http.get("http://www.w3schools.com/angular/customers.php")
-                     // .then(function (response) {
-                     // if (response.data.records[0].Country == "Germany") {
-                     // var newDate = new Date();
-                     // var visits = Math.round(Math.random() * 40) - 10
-                     // chartData.push({
-                     // date: newDate,
-                     // visits: visits
-                     // });
-                     // }
-                     // console.log("*** generateChartData- visits: " + visits);
-                     // });
-                    console.log($routeParams.containerid )
                     $http({
                         method: 'POST',
                         url: 'http://localhost:3000/crud/getCpuStats',
                         data: {'ContainerId' : $routeParams.containerid },
                         headers: {'Content-Type': 'application/json'}
                     }).success(function (data, status, headers, config) {
-                        // this callback will be called asynchronously
-                        // when the response is available
-                        //$scope.images = data.ImageList;
                         var newDate = new Date();
                         chartData.push({
                             date : newDate,
                             visits : data.CPU
                         })
                     }).error(function (data, status, headers, config) {
-                        // called asynchronously if an error occurs
-                        // or server returns response with an error status.
                     });
                     return chartData;
                 }
@@ -656,53 +492,32 @@ mainRouter.directive('cpuChart', ['$http', '$routeParams',
                             "color": "#FFFFFF",
                             "autoGridCount": true
                         }
-                    })
+                    });
 
                     /**
                      * Set interval to push new data points periodically
                      */
                     // set up the chart to update every second
                     setInterval(function () {
-                        console.log($routeParams.containerid )
                         // load new datapoints here,
-                        var newDate = new Date();
-                        var visits = -1;
-
-                         // $http.get("http://www.w3schools.com/angular/customers.php")
-                         // .then(function (response) {
-                         // if (response.data.records[0].Country == "Germany") {
-                         // newDate = new Date();
-                         // visits = Math.round(Math.random() * 40) - 10
-                         // chart.dataProvider.push({
-                         // date: newDate,
-                         // visits: visits
-                         // });
-                         // }
-                         // console.log("*** chart.dataProvider- visits: " + visits);
-                         // });
-
                         $http({
                             method: 'POST',
                             url: 'http://localhost:3000/crud/getCpuStats',
                             data: {'ContainerId' : $routeParams.containerid },
                             headers: {'Content-Type': 'application/json'}
                         }).success(function (data, status, headers, config) {
-                            // this callback will be called asynchronously
-                            // when the response is available
                             var newDate = new Date();
                             chart.dataProvider.push({
                                 date : newDate,
                                 visits : data.CPU
                             })
                         }).error(function (data, status, headers, config) {
-                            // called asynchronously if an error occurs
-                            // or server returns response with an error status.
                         });
                         chart.validateData();
                     }, 1000);
                 };
                 initChart();
 
-            }//end watch
+            }
         }
     }]);

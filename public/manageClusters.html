@@ -62,13 +62,13 @@
                         <td ng-if="c.State == 'stopped'">
                             <button class="w3-btn w3-btn-floating w3-green  w3-ripple" ng-click="editCluster('start',c.ClusterName)">
                                 &#x25ba;</button>
-                            <button class="w3-btn w3-btn-floating w3-yellow w3-ripple" ng-click="editCluster('delete',c.ClusterName)">
+                            <button class="w3-btn w3-btn-floating w3-red w3-ripple" ng-click="editCluster('delete',c.ClusterName)">
                                 &#x2718;</button>
                         </td>
                         <td ng-if="c.State == 'running'">
                             <button class="w3-btn w3-btn-floating w3-red w3-ripple" ng-click="editCluster('stop',c.ClusterName)">
                                 &#x25A1;</button>
-                            <button class="w3-btn w3-btn-floating w3-grey w3-ripple" ng-click="editCluster('restart',c.ClusterName)">
+                            <button class="w3-btn w3-btn-floating w3-yellow w3-ripple" ng-click="editCluster('restart',c.ClusterName)">
                                 &#x21ba;</button>
                         </td>
                     </tr>
