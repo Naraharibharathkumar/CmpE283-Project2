@@ -40,39 +40,40 @@
     <!-- /.navbar-collapse -->
     <div class="col-sm-10">
         <div id="page-wrapper">
-            <div class="container-fluid">
-                <div align="center">
-                    <div class="w3-container w3-black w3-left-align w3-allerta">
-                        <p class="w3-xlarge w3-text-shadow">Manage Clusters</p>
+            <div align="center">
+                <div class="container-fluid">
+                    <div class="w3-card-8">
+                        <div class="w3-container w3-blue">
+                            <h2>Manage Clusters</h2>
+                        </div>
                     </div>
+                    <table class="w3-table w3-bordered w3-striped">
+                        <tr class="w3-grey">
+                            <th>Name</th>
+                            <th>Containers</th>
+                            <th>Status</th>
+                            <th>Operation</th>
+                        </tr>
+                        <tr ng-repeat="c in clusters | orderBy : 'ClusterName'">
+                            <td>{{ c.ClusterName }}</td>
+                            <td>{{ c.ContainerList }}</td>
+                            <td>{{ c.State }}</td>
+                            <!-- FIX ng-if conditions the current ones are for test -->
+                            <td ng-if="c.State == 'stopped'">
+                                <button class="w3-btn w3-btn-floating w3-green  w3-ripple" ng-click="editCluster('start',c.ClusterName)">
+                                    &#x25ba;</button>
+                                <button class="w3-btn w3-btn-floating w3-red w3-ripple" ng-click="editCluster('delete',c.ClusterName)">
+                                    &#x2718;</button>
+                            </td>
+                            <td ng-if="c.State == 'running'">
+                                <button class="w3-btn w3-btn-floating w3-red w3-ripple" ng-click="editCluster('stop',c.ClusterName)">
+                                    &#x25A1;</button>
+                                <button class="w3-btn w3-btn-floating w3-yellow w3-ripple" ng-click="editCluster('restart',c.ClusterName)">
+                                    &#x21ba;</button>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
-                <br/>
-                <table class="w3-table w3-bordered w3-striped">
-                    <tr class="w3-grey">
-                        <th>Name</th>
-                        <th>Containers</th>
-                        <th>Status</th>
-                        <th>Operation</th>
-                    </tr>
-                    <tr ng-repeat="c in clusters | orderBy : 'ClusterName'">
-                        <td>{{ c.ClusterName }}</td>
-                        <td>{{ c.ContainerList }}</td>
-                        <td>{{ c.State }}</td>
-                        <!-- FIX ng-if conditions the current ones are for test -->
-                        <td ng-if="c.State == 'stopped'">
-                            <button class="w3-btn w3-btn-floating w3-green  w3-ripple" ng-click="editCluster('start',c.ClusterName)">
-                                &#x25ba;</button>
-                            <button class="w3-btn w3-btn-floating w3-red w3-ripple" ng-click="editCluster('delete',c.ClusterName)">
-                                &#x2718;</button>
-                        </td>
-                        <td ng-if="c.State == 'running'">
-                            <button class="w3-btn w3-btn-floating w3-red w3-ripple" ng-click="editCluster('stop',c.ClusterName)">
-                                &#x25A1;</button>
-                            <button class="w3-btn w3-btn-floating w3-yellow w3-ripple" ng-click="editCluster('restart',c.ClusterName)">
-                                &#x21ba;</button>
-                        </td>
-                    </tr>
-                </table>
             </div>
         </div>
     </div>

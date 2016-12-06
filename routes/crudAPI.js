@@ -82,12 +82,22 @@ router.post('/listContainers', function(req, res, next){
             else{
                 result1 = JSON.parse(result1);
                 var resultJSON = [];
-                result1.forEach(function (result) {
-                    resultJSON.push({"Id" : result.Id,"Name" : result.Names[0].substring(1, result.Names[0].length), "Image" : result.Image, "Command" : result.Command, "Ports" : result.Ports, "Status" : result.State});
+                var clusterUrl = 'cat decking.json';
+                exec( clusterUrl, hostinfo ,function (err2, result2, temp2) {
+                    result2 = JSON.parse(result2);
+                    var containerList = Object.keys(result2.containers);
+                    result1.forEach(function (result) {
+                        if(containerList.indexOf(result.Names[0].substring(1, result.Names[0].length)) > -1){
+
+                        }
+                        else{
+                            resultJSON.push({"Id" : result.Id,"Name" : result.Names[0].substring(1, result.Names[0].length), "Image" : result.Image, "Command" : result.Command, "Ports" : result.Ports, "Status" : result.State});
+                        }
+                    });
+                    res.setHeader('Content-Type', 'application/json');
+                    res.status(200);
+                    res.send({"Status" : "Ok", "ContainerList" : resultJSON});
                 });
-                res.setHeader('Content-Type', 'application/json');
-                res.status(200);
-                res.send({"Status" : "Ok", "ContainerList" : resultJSON});
             }
         });
     }
@@ -369,11 +379,24 @@ router.post('/getNetworkStats', function (req, res, next) {
         try{
             var url = 'echo -e "GET /containers/'+containerId+'/stats?stream=0 HTTP/1.0\r\n" | nc -q -1 -U /var/run/docker.sock | tail -1'
             exec(url, hostinfo, function (er, stdout, stderr) {
+                if(stdout==''){
+                    res.setHeader('Content-Type', 'application/json');
+                    res.status(450);
+                    res.send({"Network" : {}});
+                }
+                else {
                     stdout = stdout.substring(0, stdout.length -1);
                     stdout = JSON.parse(stdout);
                     res.setHeader('Content-Type', 'application/json');
                     res.status(200);
-                    res.send({"Network" : stdout});
+                    var keyList = Object.keys(stdout);
+                    if(keyList.indexOf("networks") > -1){
+                        res.send({"rx_bytes" : stdout.networks.eth0.rx_bytes,"tx_bytes" : stdout.networks.eth0.tx_bytes});
+                    }
+                    else{
+                        res.send({"rx_bytes" : 0,"tx_bytes" : 0})
+                    }
+                }
             });
         }
         catch(err){
@@ -399,14 +422,20 @@ router.post('/getIOStats', function (req, res, next) {
                 if(stdout==''){
                     res.setHeader('Content-Type', 'application/json');
                     res.status(450);
-                    res.send({"IO" : {}});
+                    res.send({"read" : 0,"write" : 0});
                 }
                 else {
                     stdout = stdout.substring(0, stdout.length -1);
                     stdout = JSON.parse(stdout);
                     res.setHeader('Content-Type', 'application/json');
                     res.status(200);
-                    res.send({"IO" : stdout});
+                    var read = 0;
+                    var write = 0;
+                    if(stdout.blkio_stats.io_service_bytes_recursive!=null){
+                        read = stdout.blkio_stats.io_service_bytes_recursive[0].value;
+                        write = stdout.blkio_stats.io_service_bytes_recursive[1].value;
+                    }
+                    res.send({'read' : read, 'write' : write});
                 }
             });
         }

@@ -49,9 +49,9 @@ mainRouter.controller('manageClusterController', function ($scope, $http) {
         url: 'http://localhost:3000/cluster/getClusters',
         data: {},
         headers: {'Content-Type': 'application/json'}
-    }).success(function (data, status, headers, config) {
+    }).success(function (data, state, headers, config) {
         $scope.clusters = data.ClusterList;
-    }).error(function (data, status, headers, config) {
+    }).error(function (data, state, headers, config) {
     });
 
     $scope.editCluster = function (status, clusterName) {
@@ -61,19 +61,11 @@ mainRouter.controller('manageClusterController', function ($scope, $http) {
                 url: 'http://localhost:3000/cluster/startCluster',
                 data: {"ClusterName": clusterName},
                 headers: {'Content-Type': 'application/json'}
-            }).success(function (data, status, headers, config) {
-                if (status == '200') {
-                    $http({
-                        method: 'POST',
-                        url: 'http://localhost:3000/cluster/getClusters',
-                        data: {},
-                        headers: {'Content-Type': 'application/json'}
-                    }).success(function (data, status, headers, config) {
-                        $scope.clusters = data.ClusterList;
-                    }).error(function (data, status, headers, config) {
-                    });
+            }).success(function (data, state, headers, config) {
+                if (state == '200') {
+                    window.location.reload();
                 }
-            }).error(function (data, status, headers, config) {
+            }).error(function (data, state, headers, config) {
             });
         } else if (status == 'stop') {
             /*TODO: http request to server*/
@@ -82,19 +74,11 @@ mainRouter.controller('manageClusterController', function ($scope, $http) {
                 url: 'http://localhost:3000/cluster/stopCluster',
                 data: {"ClusterName": clusterName},
                 headers: {'Content-Type': 'application/json'}
-            }).success(function (data, status, headers, config) {
-                if (status == '200') {
-                    $http({
-                        method: 'POST',
-                        url: 'http://localhost:3000/cluster/getClusters',
-                        data: {},
-                        headers: {'Content-Type': 'application/json'}
-                    }).success(function (data, status, headers, config) {
-                        $scope.clusters = data.ClusterList;
-                    }).error(function (data, status, headers, config) {
-                    });
+            }).success(function (data, state, headers, config) {
+                if (state == '200') {
+                    window.location.reload();
                 }
-            }).error(function (data, status, headers, config) {
+            }).error(function (data, state, headers, config) {
             });
         } else if (status == 'delete') {
             /*TODO: http request to server*/
@@ -103,19 +87,12 @@ mainRouter.controller('manageClusterController', function ($scope, $http) {
                 url: 'http://localhost:3000/cluster/deleteCluster',
                 data: {"ClusterName": clusterName},
                 headers: {'Content-Type': 'application/json'}
-            }).success(function (data, status, headers, config) {
-                if (status == '200') {
-                    $http({
-                        method: 'POST',
-                        url: 'http://localhost:3000/cluster/getClusters',
-                        data: {},
-                        headers: {'Content-Type': 'application/json'}
-                    }).success(function (data, status, headers, config) {
-                        $scope.clusters = data.ClusterList;
-                    }).error(function (data, status, headers, config) {
-                    });
+            }).success(function (data, state, headers, config) {
+                if (state == '200') {
+                    window.location.reload();
                 }
-            }).error(function (data, status, headers, config) {
+            }).error(function (data, state, headers, config) {
+
             });
         }
         else if (status == 'restart') {
@@ -125,19 +102,11 @@ mainRouter.controller('manageClusterController', function ($scope, $http) {
                 url: 'http://localhost:3000/cluster/restartCluster',
                 data: {"ClusterName": clusterName},
                 headers: {'Content-Type': 'application/json'}
-            }).success(function (data, status, headers, config) {
-                if (status == '200') {
-                    $http({
-                        method: 'POST',
-                        url: 'http://localhost:3000/cluster/getClusters',
-                        data: {},
-                        headers: {'Content-Type': 'application/json'}
-                    }).success(function (data, status, headers, config) {
-                        $scope.clusters = data.ClusterList;
-                    }).error(function (data, status, headers, config) {
-                    });
+            }).success(function (data, state, headers, config) {
+                if (state == '200') {
+                    window.location.reload();
                 }
-            }).error(function (data, status, headers, config) {
+            }).error(function (data, state, headers, config) {
             });
         }
     };
@@ -160,9 +129,9 @@ mainRouter.controller('createClusterController', function ($scope, $http) {
         url: 'http://localhost:3000/cluster/listImages',
         data: {},   // TODO: FIX ME
         headers: {'Content-Type': 'application/json'}
-    }).success(function (data, status, headers, config) {
+    }).success(function (data, state, headers, config) {
         $scope.images = data.ImageList;
-    }).error(function (data, status, headers, config) {
+    }).error(function (data, state, headers, config) {
     });
 
     // add container counts
@@ -201,9 +170,10 @@ mainRouter.controller('createClusterController', function ($scope, $http) {
             url: 'http://localhost:3000/cluster/createCluster',
             data: {"ClusterName" : $scope.clustername, "ContainerList" : containerInfoJSONArray},   // TODO: FIX ME
             headers: {'Content-Type': 'application/json'}
-        }).success(function(data, status, headers, config) {
+        }).success(function(data, state, headers, config) {
+            window.location = '#/manageCluster';
         }).
-        error(function(data, status, headers, config) {
+        error(function(data, state, headers, config) {
         });
     };
 });
@@ -214,9 +184,9 @@ mainRouter.controller('manageContainerController', function ($scope, $http) {
             url: 'http://localhost:3000/crud/listContainers',
             data: {},
             headers: {'Content-Type': 'application/json'}
-        }).success(function (data, status, headers, config) {
+        }).success(function (data, state, headers, config) {
             $scope.containers = data.ContainerList;
-        }).error(function (data, status, headers, config) {
+        }).error(function (data, state, headers, config) {
         });
 
         $scope.editContainer = function (status, cId) {
@@ -226,19 +196,20 @@ mainRouter.controller('manageContainerController', function ($scope, $http) {
                     url: 'http://localhost:3000/crud/startContainer',
                     data: {"ContainerId": cId},
                     headers: {'Content-Type': 'application/json'}
-                }).success(function (data, status, headers, config) {
-                    if (status == '200') {
-                        $http({
-                            method: 'POST',
-                            url: 'http://localhost:3000/crud/listContainers',
-                            data: {},
-                            headers: {'Content-Type': 'application/json'}
-                        }).success(function (data, status, headers, config) {
-                            $scope.containers = data.ContainerList;
-                        }).error(function (data, status, headers, config) {
-                        });
+                }).success(function (data, state, headers, config) {
+                    if (state == '200') {
+                        window.location.reload();
+                        // $http({
+                        //     method: 'POST',
+                        //     url: 'http://localhost:3000/crud/listContainers',
+                        //     data: {},
+                        //     headers: {'Content-Type': 'application/json'}
+                        // }).success(function (data, status, headers, config) {
+                        //     $scope.containers = data.ContainerList;
+                        // }).error(function (data, status, headers, config) {
+                        // });
                     }
-                }).error(function (data, status, headers, config) {
+                }).error(function (data, state, headers, config) {
                 });
             } else if (status == 'stop') {
                 $http({
@@ -246,19 +217,20 @@ mainRouter.controller('manageContainerController', function ($scope, $http) {
                     url: 'http://localhost:3000/crud/stopContainer',
                     data: {"ContainerId": cId},
                     headers: {'Content-Type': 'application/json'}
-                }).success(function (data, status, headers, config) {
-                    if (status == '200') {
-                        $http({
-                            method: 'POST',
-                            url: 'http://localhost:3000/crud/listContainers',
-                            data: {},
-                            headers: {'Content-Type': 'application/json'}
-                        }).success(function (data, status, headers, config) {
-                            $scope.containers = data.ContainerList;
-                        }).error(function (data, status, headers, config) {
-                        });
+                }).success(function (data, state, headers, config) {
+                    if (state == '200') {
+                        window.location.reload();
+                        // $http({
+                        //     method: 'POST',
+                        //     url: 'http://localhost:3000/crud/listContainers',
+                        //     data: {},
+                        //     headers: {'Content-Type': 'application/json'}
+                        // }).success(function (data, status, headers, config) {
+                        //     $scope.containers = data.ContainerList;
+                        // }).error(function (data, status, headers, config) {
+                        // });
                     }
-                }).error(function (data, status, headers, config) {
+                }).error(function (data, state, headers, config) {
                 });
             } else if (status == 'delete') {
                 $http({
@@ -266,19 +238,20 @@ mainRouter.controller('manageContainerController', function ($scope, $http) {
                     url: 'http://localhost:3000/crud/removeContainer',
                     data: {"ContainerId": cId},
                     headers: {'Content-Type': 'application/json'}
-                }).success(function (data, status, headers, config) {
-                    if (status == '200') {
-                        $http({
-                            method: 'POST',
-                            url: 'http://localhost:3000/crud/listContainers',
-                            data: {},
-                            headers: {'Content-Type': 'application/json'}
-                        }).success(function (data, status, headers, config) {
-                            $scope.containers = data.ContainerList;
-                        }).error(function (data, status, headers, config) {
-                        });
+                }).success(function (data, state, headers, config) {
+                    if (state == '200') {
+                        window.location.reload();
+                        // $http({
+                        //     method: 'POST',
+                        //     url: 'http://localhost:3000/crud/listContainers',
+                        //     data: {},
+                        //     headers: {'Content-Type': 'application/json'}
+                        // }).success(function (data, status, headers, config) {
+                        //     $scope.containers = data.ContainerList;
+                        // }).error(function (data, status, headers, config) {
+                        // });
                     }
-                }).error(function (data, status, headers, config) {
+                }).error(function (data, state, headers, config) {
                 });
             } else if (status == 'restart') {
                 $http({
@@ -286,43 +259,40 @@ mainRouter.controller('manageContainerController', function ($scope, $http) {
                     url: 'http://localhost:3000/crud/stopContainer',
                     data: {"ContainerId": cId},
                     headers: {'Content-Type': 'application/json'}
-                }).success(function (data, status, headers, config) {
-                    if (status == '200') {
+                }).success(function (data, state, headers, config) {
+                    if (state == '200') {
                         $http({
                             method: 'POST',
-                            url: 'http://localhost:3000/crud/listContainers',
-                            data: {},
+                            url: 'http://localhost:3000/crud/startContainer',
+                            data: {"ContainerId": cId},
                             headers: {'Content-Type': 'application/json'}
-                        }).success(function (data, status, headers, config) {
-                            $scope.containers = data.ContainerList;
-                        }).error(function (data, status, headers, config) {
+                        }).success(function (data1, state1, headers1, config1) {
+                            if (state1 == '200') {
+                                window.location.reload();
+                                // $http({
+                                //     method: 'POST',
+                                //     url: 'http://localhost:3000/crud/listContainers',
+                                //     data: {},
+                                //     headers: {'Content-Type': 'application/json'}
+                                // }).success(function (data, status, headers, config) {
+                                //     $scope.containers = data.ContainerList;
+                                // }).error(function (data, status, headers, config) {
+                                // });
+                            }
+                        }).error(function (data1, state1, headers1, config1) {
                         });
+                        // $http({
+                        //     method: 'POST',
+                        //     url: 'http://localhost:3000/crud/listContainers',
+                        //     data: {},
+                        //     headers: {'Content-Type': 'application/json'}
+                        // }).success(function (data, status, headers, config) {
+                        //     $scope.containers = data.ContainerList;
+                        // }).error(function (data, status, headers, config) {
+                        // });
                     }
-                }).error(function (data, status, headers, config) {
+                }).error(function (data, state, headers, config) {
                 });
-
-                /*start*/
-                if (status == 'start') {
-                    $http({
-                        method: 'POST',
-                        url: 'http://localhost:3000/crud/startContainer',
-                        data: {"ContainerId": cId},
-                        headers: {'Content-Type': 'application/json'}
-                    }).success(function (data, status, headers, config) {
-                        if (status == '200') {
-                            $http({
-                                method: 'POST',
-                                url: 'http://localhost:3000/crud/listContainers',
-                                data: {},
-                                headers: {'Content-Type': 'application/json'}
-                            }).success(function (data, status, headers, config) {
-                                $scope.containers = data.ContainerList;
-                            }).error(function (data, status, headers, config) {
-                            });
-                        }
-                    }).error(function (data, status, headers, config) {
-                    });
-                }
             }
         };
 
@@ -337,9 +307,9 @@ mainRouter.controller('createContainerController', function ($scope, $http) {
         url: 'http://localhost:3000/crud/listImages',
         data: {},
         headers: {'Content-Type': 'application/json'}
-    }).success(function (data, status, headers, config) {
+    }).success(function (data, state, headers, config) {
         $scope.images = data.ImageList;
-    }).error(function (data, status, headers, config) {
+    }).error(function (data, state, headers, config) {
     });
 
 
@@ -350,8 +320,9 @@ mainRouter.controller('createContainerController', function ($scope, $http) {
             url: 'http://localhost:3000/crud/createContainer',
             data: {'ContainerName': name, 'ContainerTag': tag},
             headers: {'Content-Type': 'application/json'}
-        }).success(function (data, status, headers, config) {
-        }).error(function (data, status, headers, config) {
+        }).success(function (data, state, headers, config) {
+            window.location = '#/manageContainer';
+        }).error(function (data, state, headers, config) {
         });
     };
 });
@@ -362,14 +333,13 @@ mainRouter.controller('viewUsageController', function ($scope, $http) {
         url: 'http://localhost:3000/crud/listContainers',
         data: {},
         headers: {'Content-Type': 'application/json'}
-    }).success(function (data, status, headers, config) {
+    }).success(function (data, state, headers, config) {
         $scope.containers = data.ContainerList;
-    }).error(function (data, status, headers, config) {
+    }).error(function (data, state, headers, config) {
     });
 });
 
 mainRouter.controller('viewChartsController', function($scope,$routeParams,$http){
-
 });
 
 mainRouter.controller('imageController', function($scope,$http){
@@ -383,9 +353,9 @@ mainRouter.controller('imageController', function($scope,$http){
             url: 'http://localhost:3000/crud/getContainer',
             data: {'ContainerName': $scope.imagename},
             headers: {'Content-Type': 'application/json'}
-        }).success(function (data, status, headers, config) {
+        }).success(function (data, state, headers, config) {
             $scope.images = data;
-        }).error(function (data, status, headers, config) {
+        }).error(function (data, state, headers, config) {
         });
     };
 
@@ -395,10 +365,9 @@ mainRouter.controller('imageController', function($scope,$http){
             url: 'http://localhost:3000/crud/createImage',
             data: {'ContainerName': name, 'ContainerTag': tag},
             headers: {'Content-Type': 'application/json'}
-        }).success(function (data, status, headers, config) {
-            alert(data);
-        }).error(function (data, status, headers, config) {
-            alert("ERROR in Creating Image");
+        }).success(function (data, state, headers, config) {
+            window.location='#/createContainer';
+        }).error(function (data, state, headers, config) {
         });
     }
 });
@@ -433,24 +402,28 @@ mainRouter.directive('cpuChart', ['$http', '$routeParams',
                  */
                 function generateChartData() {
                     var chartData = [];
-                    $http({
-                        method: 'POST',
-                        url: 'http://localhost:3000/crud/getCpuStats',
-                        data: {'ContainerId' : $routeParams.containerid },
-                        headers: {'Content-Type': 'application/json'}
-                    }).success(function (data, status, headers, config) {
-                        var newDate = new Date();
-                        chartData.push({
-                            date : newDate,
-                            visits : data.CPU
-                        })
-                    }).error(function (data, status, headers, config) {
-                    });
+                    if(typeof ($routeParams.containerid) == 'undefined'){
+
+                    }
+                    else{
+                        $http({
+                            method: 'POST',
+                            url: 'http://localhost:3000/crud/getCpuStats',
+                            data: {'ContainerId' : $routeParams.containerid },
+                            headers: {'Content-Type': 'application/json'}
+                        }).success(function (data, status, headers, config) {
+                            var newDate = new Date();
+                            chartData.push({
+                                date : newDate,
+                                visits : data.CPU
+                            })
+                        }).error(function (data, status, headers, config) {
+                        });
+                    }
                     return chartData;
                 }
 
                 var initChart = function () {
-                    console.log($routeParams.containerid )
                     if (chart) chart.destroy();
                     var config = scope.config || {};
                     /**
@@ -500,19 +473,429 @@ mainRouter.directive('cpuChart', ['$http', '$routeParams',
                     // set up the chart to update every second
                     setInterval(function () {
                         // load new datapoints here,
+                        if(typeof ($routeParams.containerid) == 'undefined'){
+
+                        }
+                        else{
+                            $http({
+                                method: 'POST',
+                                url: 'http://localhost:3000/crud/getCpuStats',
+                                data: {'ContainerId' : $routeParams.containerid },
+                                headers: {'Content-Type': 'application/json'}
+                            }).success(function (data, status, headers, config) {
+                                var newDate = new Date();
+                                chart.dataProvider.push({
+                                    date : newDate,
+                                    visits : data.CPU
+                                })
+                            }).error(function (data, status, headers, config) {
+                            });
+                            chart.validateData();
+                        }
+                    }, 1000);
+                };
+                initChart();
+            }
+        }
+    }]);
+
+
+mainRouter.directive('memoryChart', ['$http', '$routeParams',
+    function ($http,$routeParams) {
+        return {
+            restrict: 'E',
+            replace: true,
+
+            template: '<div id="chartdiv2" style="min-width: 110px; height: 400px; margin: 0 auto"></div>',
+            link: function (scope, element, attrs) {
+                var chart = false;
+                /**
+                 * Function that generates data
+                 */
+                function generateChartData() {
+                    var chartData = [];
+                    if(typeof ($routeParams.containerid) == 'undefined'){
+
+                    }
+                    else{
                         $http({
                             method: 'POST',
-                            url: 'http://localhost:3000/crud/getCpuStats',
-                            data: {'ContainerId' : $routeParams.containerid },
+                            url: 'http://localhost:3000/crud/getMemoryStats',
+                            data: {'ContainerId': $routeParams.containerid},
                             headers: {'Content-Type': 'application/json'}
                         }).success(function (data, status, headers, config) {
                             var newDate = new Date();
-                            chart.dataProvider.push({
-                                date : newDate,
-                                visits : data.CPU
+                            chartData.push({
+                                date: newDate,
+                                memory: data.Memory,
+                                limit: data.Limit
                             })
                         }).error(function (data, status, headers, config) {
                         });
+                    }
+                    return chartData;
+                }
+
+                var initChart = function () {
+                    if (chart) chart.destroy();
+                    var config = scope.config || {};
+                    /**
+                     * Create the chart
+                     */
+
+                    var chart = AmCharts.makeChart("chartdiv2", {
+                        "type": "serial",
+                        "theme": "light",
+                        "glueToTheEnd": false,
+                        "zoomOutButton": {
+                            "backgroundColor": '#000000',
+                            "backgroundAlpha": 0.15
+                        },
+                        "legend": {
+                            "useGraphSettings": true,
+                            "align": "right"
+                        },
+                        "titles": [
+                            {
+                                "text": "Memory Usage (MB)",
+                                "size": 15
+                            }
+                        ],
+
+                        "dataProvider": generateChartData(),
+                        "categoryField": "date",
+                        "categoryAxis": {
+                            "parseDates": true,
+                            "minPeriod": "5ss",
+                            "dashLength": 1,
+                            "gridAlpha": 0.15,
+                            "axisColor": "#DADADA"
+                        },
+                        "graphs": [{
+                            "id": "g1",
+                            "valueField": "limit",
+                            "title"   : "Limit",
+                            "type"    : "step",
+                            "usePeriod": "ss",
+                            "fillAlphas"  : 1
+                        }, {
+                            "id": "g2",
+                            "valueField": "memory",
+                            "title"   : "Memory",
+                            "type"    : "step",
+                            "usePeriod": "ss",
+                            "fillAlphas"  : 1
+                        }],
+                        "chartCursor": {
+                            "cursorPosition": "mouse"
+                        },
+                        "chartScrollbar": {
+                            "graph": "g1",
+                            "scrollbarHeight": 40,
+                            "color": "#FFFFFF",
+                            "autoGridCount": true
+                        }
+                    });
+
+                    /**
+                     * Set interval to push new data points periodically
+                     */
+                    // set up the chart to update every second
+                    setInterval(function () {
+                        // load new datapoints here,
+                        if(typeof ($routeParams.containerid) == 'undefined'){
+
+                        }
+                        else{
+                            $http({
+                                method: 'POST',
+                                url: 'http://localhost:3000/crud/getMemoryStats',
+                                data: {'ContainerId' : $routeParams.containerid },
+                                headers: {'Content-Type': 'application/json'}
+                            }).success(function (data, status, headers, config) {
+                                var newDate = new Date();
+                                chart.dataProvider.push({
+                                    date : newDate,
+                                    memory : data.Memory,
+                                    limit : data.Limit
+                                })
+                            }).error(function (data, status, headers, config) {
+                            });
+                        }
+                        chart.validateData();
+                    }, 1000);
+                };
+                initChart();
+
+            }
+        }
+    }]);
+
+mainRouter.directive('networkChart', ['$http', '$routeParams',
+    function ($http, $routeParams) {
+        return {
+            restrict: 'E',
+            replace: true,
+
+            template: '<div id="chartdiv3" style="min-width: 110px; height: 400px; margin: 0 auto"></div>',
+            link: function (scope, element, attrs) {
+                var chart = false;
+
+                /**
+                 * Function that generates data
+                 */
+                function generateChartData() {
+                    var chartData = [];
+                    if(typeof ($routeParams.containerid) == 'undefined'){
+
+                    }
+                    else{
+                        $http({
+                            method: 'POST',
+                            url: 'http://localhost:3000/crud/getNetworkStats',
+                            data: {'ContainerId': $routeParams.containerid},
+                            headers: {'Content-Type': 'application/json'}
+                        }).success(function (data, status, headers, config) {
+                            var newDate = new Date();
+                            chartData.push({
+                                date: newDate,
+                                received_bytes: data.rx_bytes,
+                                sent_bytes: data.tx_bytes
+                            })
+                        }).error(function (data, status, headers, config) {
+                        });
+                    }
+                    return chartData;
+                }
+
+                var initChart = function () {
+                    if (chart) chart.destroy();
+                    var config = scope.config || {};
+                    /**
+                     * Create the chart
+                     */
+
+                    var chart = AmCharts.makeChart("chartdiv3", {
+                        "type": "serial",
+                        "theme": "light",
+                        "glueToTheEnd": false,
+                        "zoomOutButton": {
+                            "backgroundColor": '#000000',
+                            "backgroundAlpha": 0.15
+                        },
+                        "legend": {
+                            "useGraphSettings": true,
+                            "align": "right"
+                        },
+                        "titles": [
+                            {
+                                "text": "Network In/Out (bytes)",
+                                "size": 15
+                            }
+                        ],
+
+                        "dataProvider": generateChartData(),
+                        "categoryField": "date",
+                        "categoryAxis": {
+                            "parseDates": true,
+                            "minPeriod": "ss",
+                            "dashLength": 1,
+                            "gridAlpha": 0.15,
+                            "axisColor": "#DADADA"
+                        },
+                        "graphs": [{
+                            "id": "g1",
+                            "valueField": "received_bytes",
+                            "title": "In",
+                            "bulletBorderColor": "#FFFFFF",
+                            "bulletBorderThickness": 2,
+                            "lineThickness": 2,
+                            "lineColor": "#24b506",
+                            "hideBulletsCount": 50
+                        },
+                            {
+                                "id": "g2",
+                                "valueField": "sent_bytes",
+                                "title": "Out",
+                                "bulletBorderColor": "#FFFFFF",
+                                "bulletBorderThickness": 2,
+                                "lineThickness": 2,
+                                "lineColor": "#0352b5",
+                                "hideBulletsCount": 50
+                            }],
+                        "chartCursor": {
+                            "cursorPosition": "mouse"
+                        },
+                        "chartScrollbar": {
+                            "graph": "g1",
+                            "scrollbarHeight": 40,
+                            "color": "#FFFFFF",
+                            "autoGridCount": true
+                        }
+                    });
+
+                    /**
+                     * Set interval to push new data points periodically
+                     */
+                    // set up the chart to update every second
+                    setInterval(function () {
+                        // load new datapoints here,
+                        if(typeof ($routeParams.containerid) == 'undefined'){
+
+                        }
+                        else{
+                            $http({
+                                method: 'POST',
+                                url: 'http://localhost:3000/crud/getNetworkStats',
+                                data: {'ContainerId': $routeParams.containerid},
+                                headers: {'Content-Type': 'application/json'}
+                            }).success(function (data, status, headers, config) {
+                                var newDate = new Date();
+                                chart.dataProvider.push({
+                                    date: newDate,
+                                    received_bytes: data.rx_bytes,
+                                    sent_bytes: data.tx_bytes
+                                })
+                            }).error(function (data, status, headers, config) {
+                            });
+                        }
+                        chart.validateData();
+                    }, 1000);
+                };
+                initChart();
+
+            }
+        }
+    }]);
+
+mainRouter.directive('ioChart', ['$http', '$routeParams',
+    function ($http, $routeParams) {
+        return {
+            restrict: 'E',
+            replace: true,
+
+            template: '<div id="chartdiv4" style="min-width: 110px; height: 400px; margin: 0 auto"></div>',
+            link: function (scope, element, attrs) {
+                var chart = false;
+
+                /**
+                 * Function that generates data
+                 */
+                function generateChartData() {
+                    var chartData = [];
+                    if(typeof ($routeParams.containerid) == 'undefined'){
+
+                    }
+                    else{
+                        $http({
+                            method: 'POST',
+                            url: 'http://localhost:3000/crud/getIOStats',
+                            data: {'ContainerId': $routeParams.containerid},
+                            headers: {'Content-Type': 'application/json'}
+                        }).success(function (data, status, headers, config) {
+                            var newDate = new Date();
+                            chartData.push({
+                                date: newDate,
+                                read: data.read,
+                                write: data.write
+                            })
+                        }).error(function (data, status, headers, config) {
+                        });
+                    }
+                    return chartData;
+                }
+
+                var initChart = function () {
+                    if (chart) chart.destroy();
+                    var config = scope.config || {};
+                    /**
+                     * Create the chart
+                     */
+
+                    var chart = AmCharts.makeChart("chartdiv4", {
+                        "type": "serial",
+                        "theme": "light",
+                        "glueToTheEnd": false,
+                        "zoomOutButton": {
+                            "backgroundColor": '#000000',
+                            "backgroundAlpha": 0.15
+                        },
+                        "legend": {
+                            "useGraphSettings": true,
+                            "align": "right"
+                        },
+                        "titles": [
+                            {
+                                "text": "IO Read/Write (bytes)",
+                                "size": 15
+                            }
+                        ],
+
+                        "dataProvider": generateChartData(),
+                        "categoryField": "date",
+                        "categoryAxis": {
+                            "parseDates": true,
+                            "minPeriod": "ss",
+                            "dashLength": 1,
+                            "gridAlpha": 0.15,
+                            "axisColor": "#DADADA"
+                        },
+                        "graphs": [{
+                            "id": "g1",
+                            "valueField": "read",
+                            "title": "Read",
+                            "bulletBorderColor": "#FFFFFF",
+                            "bulletBorderThickness": 2,
+                            "lineThickness": 2,
+                            "lineColor": "#24b506",
+                            "hideBulletsCount": 50
+                        },
+                            {
+                                "id": "g2",
+                                "valueField": "write",
+                                "title": "Write",
+                                "bulletBorderColor": "#FFFFFF",
+                                "bulletBorderThickness": 2,
+                                "lineThickness": 2,
+                                "lineColor": "#0352b5",
+                                "hideBulletsCount": 50
+                            }],
+                        "chartCursor": {
+                            "cursorPosition": "mouse"
+                        },
+                        "chartScrollbar": {
+                            "graph": "g1",
+                            "scrollbarHeight": 40,
+                            "color": "#FFFFFF",
+                            "autoGridCount": true
+                        }
+                    });
+
+                    /**
+                     * Set interval to push new data points periodically
+                     */
+                    // set up the chart to update every second
+                    setInterval(function () {
+                        // load new datapoints here,
+                        if(typeof ($routeParams.containerid) == 'undefined'){
+
+                        }
+                        else{
+                            $http({
+                                method: 'POST',
+                                url: 'http://localhost:3000/crud/getIOStats',
+                                data: {'ContainerId': $routeParams.containerid},
+                                headers: {'Content-Type': 'application/json'}
+                            }).success(function (data, status, headers, config) {
+                                var newDate = new Date();
+                                chart.dataProvider.push({
+                                    date: newDate,
+                                    read: data.read,
+                                    write: data.write
+                                })
+                            }).error(function (data, status, headers, config) {
+                            });
+                        }
                         chart.validateData();
                     }, 1000);
                 };

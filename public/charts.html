@@ -40,19 +40,27 @@
     <!-- /.navbar-collapse -->
     <div class="col-sm-10">
         <div id="page-wrapper">
-            <div class="container-fluid">
-                <div>
-                    <cpu-chart></cpu-chart>
-                </div>
-                <div>
-                    <div>
-
+            <div align="center">
+                <div class="container-fluid">
+                    <div class="w3-card-8">
+                        <div class="w3-container w3-blue">
+                            <h2>Container Information</h2>
+                        </div>
                     </div>
                     <div>
-
+                        <cpu-chart></cpu-chart>
                     </div>
                     <div>
+                        <div class="col-sm-4">
+                            <memory-chart></memory-chart>
 
+                        </div>
+                        <div class="col-sm-4">
+                            <network-chart></network-chart>
+                        </div>
+                        <div class="col-sm-4">
+                            <io-chart></io-chart>
+                        </div>
                     </div>
                 </div>
             </div>

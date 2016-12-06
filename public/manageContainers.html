@@ -40,46 +40,49 @@
     <!-- /.navbar-collapse -->
     <div class="col-sm-10">
         <div id="page-wrapper">
-            <div class="container-fluid">
-                <div class="w3-container w3-black w3-left-align w3-allerta">
-                    <p class="w3-xlarge w3-text-shadow">Manage Containers</p>
+            <div align="center">
+                <div class="container-fluid">
+                    <div class="w3-card-8">
+                        <div class="w3-container w3-blue">
+                            <h2>Manage Containers</h2>
+                        </div>
+                        <table class="w3-table w3-bordered w3-striped">
+                            <tr class="w3-grey">
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Image</th>
+                                <th>Command</th>
+                                <th>Status</th>
+                                <th>Operation</th>
+                            </tr>
+                            <tr ng-repeat="c in containers | orderBy : 'Name'">
+                                <td>{{ c.Id }}</td>
+                                <td>{{ c.Name }}</td>
+                                <td>{{ c.Image }}</td>
+                                <td>{{ c.Command }}</td>
+                                <td>{{ c.Status }}</td>
+                                <td ng-if="c.Status == 'running'">
+                                    <button class="w3-btn w3-btn-floating w3-red  w3-ripple" ng-click="editContainer('stop',c.Id)">
+                                        &#x25A1;</button>
+                                    <button class="w3-btn w3-btn-floating w3-yellow w3-ripple" ng-click="editContainer('restart',c.Id)">
+                                        &#x21ba;</button>
+                                </td>
+                                <td ng-if="c.Status == 'created'">
+                                    <button class="w3-btn w3-btn-floating w3-green  w3-ripple" ng-click="editContainer('start',c.Id)">
+                                        &#x25ba;</button>
+                                    <button class="w3-btn w3-btn-floating w3-red w3-ripple" ng-click="editContainer('delete',c.Id)">
+                                        &#x2718;</button>
+                                </td>
+                                <td ng-if="c.Status == 'exited'">
+                                    <button class="w3-btn w3-btn-floating w3-green w3-ripple" ng-click="editContainer('start',c.Id)">
+                                        &#x25ba;</button>
+                                    <button class="w3-btn w3-btn-floating w3-red w3-ripple" ng-click="editContainer('delete',c.Id)">
+                                        &#x2718;</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
-                <br/>
-                <table class="w3-table w3-bordered w3-striped">
-                    <tr class="w3-grey">
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Image</th>
-                        <th>Command</th>
-                        <th>Status</th>
-                        <th>Operation</th>
-                    </tr>
-                    <tr ng-repeat="c in containers | orderBy : 'Name'">
-                        <td>{{ c.Id }}</td>
-                        <td>{{ c.Name }}</td>
-                        <td>{{ c.Image }}</td>
-                        <td>{{ c.Command }}</td>
-                        <td>{{ c.Status }}</td>
-                        <td ng-if="c.Status == 'running'">
-                            <button class="w3-btn w3-btn-floating w3-red  w3-ripple" ng-click="editContainer('stop',c.Id)">
-                                &#x25A1;</button>
-                            <button class="w3-btn w3-btn-floating w3-yellow w3-ripple" ng-click="editContainer('restart',c.Id)">
-                                &#x21ba;</button>
-                        </td>
-                        <td ng-if="c.Status == 'created'">
-                            <button class="w3-btn w3-btn-floating w3-green  w3-ripple" ng-click="editContainer('start',c.Id)">
-                                &#x25ba;</button>
-                            <button class="w3-btn w3-btn-floating w3-red w3-ripple" ng-click="editContainer('delete',c.Id)">
-                                &#x2718;</button>
-                        </td>
-                        <td ng-if="c.Status == 'exited'">
-                            <button class="w3-btn w3-btn-floating w3-green w3-ripple" ng-click="editContainer('start',c.Id)">
-                                &#x25ba;</button>
-                            <button class="w3-btn w3-btn-floating w3-red w3-ripple" ng-click="editContainer('delete',c.Id)">
-                                &#x2718;</button>
-                        </td>
-                    </tr>
-                </table>
             </div>
         </div>
     </div>

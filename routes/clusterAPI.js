@@ -75,6 +75,9 @@ router.post('/getClusters', function (req, res, next) {
                         else{
                             state = 'running';
                         }
+                        // var containerList = stdout.clusters[cluster];
+                        // var tempList = Object.keys(stdout.containers);
+                        // console.log(tempList);
                         resultJSON.push({"ClusterName" : cluster, "ContainerList" : stdout.clusters[cluster], "State" : state});
                         index = index + 1;
                         if(index==clusterList.length){
@@ -420,23 +423,45 @@ router.post('/deleteCluster', function (req,res,next) {
                         }
                         catch(ex){
                             if(ex==breakException){
+                                var abcd = Object.keys(stdout.clusters);
                                 var containerList = stdout.clusters[clusterName];
+                                var index = 0;
                                 containerList.forEach(function (container) {
-                                    var execUrl = 'docker ps -aqf "name='+container+'"';
-                                    exec(execUrl, hostinfo, function(err1, stdout1, stderr1){
-                                        var url = 'curl -X DELETE http://127.0.0.1:2375/containers/'+stdout1.substring(0,stdout1.length-1);
-                                        exec( url , hostinfo , function (err2, stdout2, stderr2) {
+                                    var foundException = [];
+                                    var notFoundException = {};
+                                    try{
+                                        abcd.forEach(function (abc) {
+                                            if(stdout.clusters[abc].indexOf(container) > -1){
+                                                throw foundException;
+                                            }
                                         });
-                                    });
-                                });
-                                delete stdout.clusters[clusterName];
-                                var execUrl = 'echo \''+JSON.stringify(stdout)+'\' > decking.json';
-                                exec(execUrl, hostinfo, function(err3, stdout3, stderr3){
+                                        throw notFoundException;
+                                    }
+                                    catch(exe){
+                                        if(exe==foundException){
 
+                                        }
+                                        else if(exe==notFoundException){
+                                            var execUrl = 'docker ps -aqf "name='+container+'"';
+                                            exec(execUrl, hostinfo, function(err1, stdout1, stderr1){
+                                                var url = 'curl -X DELETE http://127.0.0.1:2375/containers/'+stdout1.substring(0,stdout1.length-1);
+                                                exec( url , hostinfo , function (err2, stdout2, stderr2) {
+                                                });
+                                            });
+                                            delete stdout.containers[container];
+                                        }
+                                    }
+                                    index = index + 1;
+                                    if(index == containerList.length){
+                                        delete stdout.clusters[clusterName];
+                                        var execUrl = 'echo \''+JSON.stringify(stdout)+'\' > decking.json';
+                                        exec(execUrl, hostinfo, function(err3, stdout3, stderr3){
+                                        });
+                                        res.setHeader('Content-Type', 'application/json');
+                                        res.status(200);
+                                        res.send({"Message" : "Cluster Deleted"});
+                                    }
                                 });
-                                res.setHeader('Content-Type', 'application/json');
-                                res.status(200);
-                                res.send({"Message" : "Cluster Deleted"});
                             }
                             else if(ex==nullException){
                                 res.setHeader('Content-Type', 'application/json');
