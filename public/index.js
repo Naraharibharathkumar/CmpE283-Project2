@@ -1,6 +1,3 @@
-/**
- * Created by BharathKumar on 12/3/2016.
- */
 var mainRouter = angular.module('mainRouter', ['ngRoute']);
 
 mainRouter.config(['$routeProvider', function ($routeProvider) {

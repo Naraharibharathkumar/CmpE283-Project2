@@ -1,6 +1,3 @@
-/**
- * Created by BharathKumar on 11/30/2016.
- */
 var express = require('express');
 var router = express.Router();
 var exec = require('ssh-exec');
