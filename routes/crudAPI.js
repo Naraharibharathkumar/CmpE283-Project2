@@ -6,11 +6,25 @@ var router = express.Router();
 var exec = require('ssh-exec');
 var getMongoClient = require('../routes/connectMongo');
 
-var hostinfo = {
-    user: 'project',
-    host: '192.168.86.130',
-    password: '1234'
-};
+//API For Checking User logged in
+router.post('/checkUser', function(req, res, next){
+    if(typeof (req.session.user)=='undefined'){
+        res.setHeader('Content-Type', 'application/json');
+        res.status(204);
+        res.send({});
+    }
+    else{
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200);
+        res.send({});
+    }
+});
+
+//API For User Log out
+router.get('/logout', function(req, res, next){
+    req.session.user = undefined ;
+    res.redirect('/');
+});
 
 //API For Registering User
 router.post('/register', function(req, res, next){
@@ -87,6 +101,7 @@ router.post('/login', function (req, res, next) {
                     }
                     else{
                         if(result.length > 0){
+                            req.session.user = result[0];
                             res.setHeader('Content-Type', 'application/json');
                             res.status(200);
                             res.send({"EmailId" : emailId, "Password" : password, "HostIP" : result[0].HostIP, "HostUserName" : result[0].HostUserName, "HostPassword" : result[0].HostPassword});
@@ -108,10 +123,14 @@ router.post('/login', function (req, res, next) {
     });
 });
 
-
 //API for Getting Container List
 router.post('/getContainer', function(req, res, next) {
     var containerName = req.body.ContainerName;
+    var hostinfo = {
+        user: req.session.user.HostUserName,
+        host: req.session.user.HostIP,
+        password: req.session.user.Password
+    };
     if(typeof(containerName) != 'undefined'  && containerName.length > 0) {
         try{
             var url = 'curl -XGET http://127.0.0.1:2375/images/search?term='+containerName;
@@ -169,6 +188,11 @@ router.post('/listImages', function(req, res, next){
 
 //API For getting Container List
 router.post('/listContainers', function(req, res, next){
+    var hostinfo = {
+        user: req.session.user.HostUserName,
+        host: req.session.user.HostIP,
+        password: req.session.user.Password
+    };
     try{
         var imageUrl = 'curl http://localhost:2375/containers/json?all=1';
         exec( imageUrl, hostinfo ,function (err1, result1, temp) {
@@ -210,6 +234,11 @@ router.post('/listContainers', function(req, res, next){
 router.post('/createImage', function (req, res, next) {
     var containerName = req.body.ContainerName;
     var containerTag = req.body.ContainerTag;
+    var hostinfo = {
+        user: req.session.user.HostUserName,
+        host: req.session.user.HostIP,
+        password: req.session.user.Password
+    };
     if(typeof(containerName)!='undefined' && containerName.length > 0){
         try{
             var getUrl = 'curl http://localhost:2375/images/json';
@@ -284,6 +313,11 @@ router.post('/createImage', function (req, res, next) {
 router.post('/createContainer', function(req, res, next) {
     var containerName = req.body.ContainerName;
     var containerTag = req.body.ContainerTag;
+    var hostinfo = {
+        user: req.session.user.HostUserName,
+        host: req.session.user.HostIP,
+        password: req.session.user.Password
+    };
     if(typeof(containerName) != 'undefined'  && containerName.length > 0) {
         try{
             var url = 'curl -X POST -H "Content-Type: application/json" -d \'{"Hostname":"","User":"","Memory":0,"MemorySwap":0,"AttachStdin":false,"AttachStdout":true,"AttachStderr":true,"PortSpecs":null,"Privileged":false,"Tty":false,"OpenStdin":false,"StdinOnce":false,"Env":null,"Dns":null,"Image":"'+containerName+'","tag":"'+containerTag+'","Volumes":{},"WorkingDir":""}\' http://127.0.0.1:2375/containers/create';
@@ -309,6 +343,11 @@ router.post('/createContainer', function(req, res, next) {
 //Start the Container
 router.post('/startContainer', function(req, res, next){
     var containerId = req.body.ContainerId;
+    var hostinfo = {
+        user: req.session.user.HostUserName,
+        host: req.session.user.HostIP,
+        password: req.session.user.Password
+    };
     if(typeof(containerId) != 'undefined'  && containerId.length > 0) {
         var url = 'curl -XPOST http://127.0.0.1:2375/containers/'+containerId+'/start';
         try{
@@ -334,7 +373,11 @@ router.post('/startContainer', function(req, res, next){
 //Stop the Container
 router.post('/stopContainer', function(req, res, next){
     var containerId = req.body.ContainerId;
-    console.log(containerId)
+    var hostinfo = {
+        user: req.session.user.HostUserName,
+        host: req.session.user.HostIP,
+        password: req.session.user.Password
+    };
     if(typeof(containerId) != 'undefined'  && containerId.length > 0) {
         var url = 'curl -XPOST http://127.0.0.1:2375/containers/'+containerId+'/stop';
         try{
@@ -360,6 +403,11 @@ router.post('/stopContainer', function(req, res, next){
 //Delete the Container
 router.post('/removeContainer', function(req, res, next){
     var containerId = req.body.ContainerId;
+    var hostinfo = {
+        user: req.session.user.HostUserName,
+        host: req.session.user.HostIP,
+        password: req.session.user.Password
+    };
     if(typeof(containerId) != 'undefined'  && containerId.length > 0) {
         var url = 'curl -X DELETE http://127.0.0.1:2375/containers/'+containerId;
         try{
@@ -385,6 +433,11 @@ router.post('/removeContainer', function(req, res, next){
 //API For getting CPU Stats
 router.post('/getCpuStats', function (req, res, next) {
     var containerId = req.body.ContainerId;
+    var hostinfo = {
+        user: req.session.user.HostUserName,
+        host: req.session.user.HostIP,
+        password: req.session.user.Password
+    };
     if(typeof(containerId) != 'undefined'  && containerId.length > 0) {
         try{
             var url = 'echo -e "GET /containers/'+containerId+'/stats?stream=0 HTTP/1.0\r\n" | nc -q -1 -U /var/run/docker.sock | tail -1'
@@ -439,6 +492,11 @@ router.post('/getCpuStats', function (req, res, next) {
 //API For getting Memory Usage
 router.post('/getMemoryStats', function (req, res, next) {
     var containerId = req.body.ContainerId;
+    var hostinfo = {
+        user: req.session.user.HostUserName,
+        host: req.session.user.HostIP,
+        password: req.session.user.Password
+    };
     if(typeof(containerId) != 'undefined'  && containerId.length > 0) {
         try{
             var url = 'echo -e "GET /containers/'+containerId+'/stats?stream=0 HTTP/1.0\r\n" | nc -q -1 -U /var/run/docker.sock | tail -1'
@@ -473,6 +531,11 @@ router.post('/getMemoryStats', function (req, res, next) {
 //API For Network Throughput
 router.post('/getNetworkStats', function (req, res, next) {
     var containerId = req.body.ContainerId;
+    var hostinfo = {
+        user: req.session.user.HostUserName,
+        host: req.session.user.HostIP,
+        password: req.session.user.Password
+    };
     if(typeof(containerId) != 'undefined'  && containerId.length > 0) {
         try{
             var url = 'echo -e "GET /containers/'+containerId+'/stats?stream=0 HTTP/1.0\r\n" | nc -q -1 -U /var/run/docker.sock | tail -1'
@@ -513,6 +576,11 @@ router.post('/getNetworkStats', function (req, res, next) {
 //API For I/O
 router.post('/getIOStats', function (req, res, next) {
     var containerId = req.body.ContainerId;
+    var hostinfo = {
+        user: req.session.user.HostUserName,
+        host: req.session.user.HostIP,
+        password: req.session.user.Password
+    };
     if(typeof(containerId) != 'undefined'  && containerId.length > 0) {
         try{
             var url = 'echo -e "GET /containers/'+containerId+'/stats?stream=0 HTTP/1.0\r\n" | nc -q -1 -U /var/run/docker.sock | tail -1'

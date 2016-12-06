@@ -3,29 +3,6 @@
  */
 var mainRouter = angular.module('mainRouter', ['ngRoute']);
 
-mainRouter.factory('UserService', [function () {
-    return {
-        isLogged: false,
-        emailId: '',
-        hostIp: '',
-        hostUserName: '',
-        hostPassword: ''
-    };
-}]);
-
-mainRouter.directive('checkUser', ['$rootScope', '$location', 'UserService',
-    function ($root, $loc, userSrv) {
-        return {
-            link: function (scope, elem, attrs, ctrl) {
-                $root.$on('$routeChangeStart', function(e, curr, prev){
-                    if(!userSrv.isLogged){
-                        window.location = '#/'
-                    }
-                });
-            }
-        }
-    }]);
-
 mainRouter.config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/', {
         templateUrl: 'login.html',
@@ -51,7 +28,7 @@ mainRouter.config(['$routeProvider', function ($routeProvider) {
     }).when('/monitorContainer', {
         templateUrl: 'viewUsage.html',
         controller: 'viewUsageController'
-    }).when('/viewCharts/:emailid/:containerid',{
+    }).when('/viewCharts/:containerid',{
         templateUrl: 'charts.html',
         controller: 'viewChartsController'
     }).when('/createImage',{
@@ -82,143 +59,143 @@ mainRouter.controller('containerCtrl', function ($scope, $http) {
 });
 
 mainRouter.controller('manageClusterController', function ($scope,$http) {
-        $http({
-            method: 'POST',
-            url: 'http://localhost:3000/cluster/getClusters',
-            data: {},
-            headers: {'Content-Type': 'application/json'}
-        }).success(function (data, state, headers, config) {
-            $scope.clusters = data.ClusterList;
-        }).error(function (data, state, headers, config) {
-        });
+    $http({
+        method: 'POST',
+        url: 'http://localhost:3000/cluster/getClusters',
+        data: {},
+        headers: {'Content-Type': 'application/json'}
+    }).success(function (data, state, headers, config) {
+        $scope.clusters = data.ClusterList;
+    }).error(function (data, state, headers, config) {
+    });
 
-        $scope.editCluster = function (status, clusterName) {
-            if (status == 'start') {
-                $http({
-                    method: 'POST',
-                    url: 'http://localhost:3000/cluster/startCluster',
-                    data: {"ClusterName": clusterName},
-                    headers: {'Content-Type': 'application/json'}
-                }).success(function (data, state, headers, config) {
-                    if (state == '200') {
-                        window.location.reload();
-                    }
-                }).error(function (data, state, headers, config) {
-                });
-            } else if (status == 'stop') {
-                /*TODO: http request to server*/
-                $http({
-                    method: 'POST',
-                    url: 'http://localhost:3000/cluster/stopCluster',
-                    data: {"ClusterName": clusterName},
-                    headers: {'Content-Type': 'application/json'}
-                }).success(function (data, state, headers, config) {
-                    if (state == '200') {
-                        window.location.reload();
-                    }
-                }).error(function (data, state, headers, config) {
-                });
-            } else if (status == 'delete') {
-                /*TODO: http request to server*/
-                $http({
-                    method: 'POST',
-                    url: 'http://localhost:3000/cluster/deleteCluster',
-                    data: {"ClusterName": clusterName},
-                    headers: {'Content-Type': 'application/json'}
-                }).success(function (data, state, headers, config) {
-                    if (state == '200') {
-                        window.location.reload();
-                    }
-                }).error(function (data, state, headers, config) {
+    $scope.editCluster = function (status, clusterName) {
+        if (status == 'start') {
+            $http({
+                method: 'POST',
+                url: 'http://localhost:3000/cluster/startCluster',
+                data: {"ClusterName": clusterName},
+                headers: {'Content-Type': 'application/json'}
+            }).success(function (data, state, headers, config) {
+                if (state == '200') {
+                    window.location.reload();
+                }
+            }).error(function (data, state, headers, config) {
+            });
+        } else if (status == 'stop') {
+            /*TODO: http request to server*/
+            $http({
+                method: 'POST',
+                url: 'http://localhost:3000/cluster/stopCluster',
+                data: {"ClusterName": clusterName},
+                headers: {'Content-Type': 'application/json'}
+            }).success(function (data, state, headers, config) {
+                if (state == '200') {
+                    window.location.reload();
+                }
+            }).error(function (data, state, headers, config) {
+            });
+        } else if (status == 'delete') {
+            /*TODO: http request to server*/
+            $http({
+                method: 'POST',
+                url: 'http://localhost:3000/cluster/deleteCluster',
+                data: {"ClusterName": clusterName},
+                headers: {'Content-Type': 'application/json'}
+            }).success(function (data, state, headers, config) {
+                if (state == '200') {
+                    window.location.reload();
+                }
+            }).error(function (data, state, headers, config) {
 
-                });
-            }
-            else if (status == 'restart') {
-                /*TODO: http request to server*/
-                $http({
-                    method: 'POST',
-                    url: 'http://localhost:3000/cluster/restartCluster',
-                    data: {"ClusterName": clusterName},
-                    headers: {'Content-Type': 'application/json'}
-                }).success(function (data, state, headers, config) {
-                    if (state == '200') {
-                        window.location.reload();
-                    }
-                }).error(function (data, state, headers, config) {
-                });
-            }
-        };
+            });
+        }
+        else if (status == 'restart') {
+            /*TODO: http request to server*/
+            $http({
+                method: 'POST',
+                url: 'http://localhost:3000/cluster/restartCluster',
+                data: {"ClusterName": clusterName},
+                headers: {'Content-Type': 'application/json'}
+            }).success(function (data, state, headers, config) {
+                if (state == '200') {
+                    window.location.reload();
+                }
+            }).error(function (data, state, headers, config) {
+            });
+        }
+    };
 });
 
 
 mainRouter.controller('createClusterController', function ($scope,$http) {
-        $scope.countMap = {};
-        $scope.nameMap = {};
-        $scope.spinnerIcon = {'visibility': 'hidden'};
+    $scope.countMap = {};
+    $scope.nameMap = {};
+    $scope.spinnerIcon = {'visibility': 'hidden'};
 
-        function ContainerInfo(imageName, containerName, count) {
-            this.Image = imageName;
-            this.Name = containerName;
-            this.Count = count;
+    function ContainerInfo(imageName, containerName, count) {
+        this.Image = imageName;
+        this.Name = containerName;
+        this.Count = count;
+    }
+
+    // get images
+    $http({
+        method: 'POST',
+        url: 'http://localhost:3000/cluster/listImages',
+        data: {},   // TODO: FIX ME
+        headers: {'Content-Type': 'application/json'}
+    }).success(function (data, state, headers, config) {
+        $scope.images = data.ImageList;
+    }).error(function (data, state, headers, config) {
+    });
+
+    // add container counts
+    $scope.numberChanged = function (imageName, count) {
+        if (count == 0) {
+            delete $scope.countMap[imageName];
+        } else {
+            $scope.countMap[imageName] = count;
         }
+    }
 
-        // get images
+    // store container names
+    $scope.containerNameChanged = function (imageName, cName) {
+        $scope.nameMap[imageName] = cName;
+    }
+
+    // TODO: create the json array from the selectionMap and send it to server
+    $scope.createCluster = function () {
+        var containerInfoJSONArray = [];
+        for (var key in $scope.countMap) {
+            var contName = "noname";
+            var contNum = 0;
+            if ($scope.countMap.hasOwnProperty(key)) {
+                contNum = $scope.countMap[key];
+            }
+
+            if ($scope.nameMap.hasOwnProperty(key)) {
+                contName = $scope.nameMap[key];
+            }
+
+            var containerInfoJson = new ContainerInfo(key,contName,contNum);
+            containerInfoJSONArray.push(containerInfoJson);
+        }
         $http({
             method: 'POST',
-            url: 'http://localhost:3000/cluster/listImages',
-            data: {},   // TODO: FIX ME
+            url: 'http://localhost:3000/cluster/createCluster',
+            data: {"ClusterName" : $scope.clustername, "ContainerList" : containerInfoJSONArray},   // TODO: FIX ME
             headers: {'Content-Type': 'application/json'}
-        }).success(function (data, state, headers, config) {
-            $scope.images = data.ImageList;
-        }).error(function (data, state, headers, config) {
+        }).success(function(data, state, headers, config) {
+            window.location = '#/manageCluster';
+        }).
+        error(function(data, state, headers, config) {
         });
-
-        // add container counts
-        $scope.numberChanged = function (imageName, count) {
-            if (count == 0) {
-                delete $scope.countMap[imageName];
-            } else {
-                $scope.countMap[imageName] = count;
-            }
-        }
-
-        // store container names
-        $scope.containerNameChanged = function (imageName, cName) {
-            $scope.nameMap[imageName] = cName;
-        }
-
-        // TODO: create the json array from the selectionMap and send it to server
-        $scope.createCluster = function () {
-            var containerInfoJSONArray = [];
-            for (var key in $scope.countMap) {
-                var contName = "noname";
-                var contNum = 0;
-                if ($scope.countMap.hasOwnProperty(key)) {
-                    contNum = $scope.countMap[key];
-                }
-
-                if ($scope.nameMap.hasOwnProperty(key)) {
-                    contName = $scope.nameMap[key];
-                }
-
-                var containerInfoJson = new ContainerInfo(key,contName,contNum);
-                containerInfoJSONArray.push(containerInfoJson);
-            }
-            $http({
-                method: 'POST',
-                url: 'http://localhost:3000/cluster/createCluster',
-                data: {"ClusterName" : $scope.clustername, "ContainerList" : containerInfoJSONArray},   // TODO: FIX ME
-                headers: {'Content-Type': 'application/json'}
-            }).success(function(data, state, headers, config) {
-                window.location = '#/manageCluster';
-            }).
-            error(function(data, state, headers, config) {
-            });
-        };
+    };
 });
 
 mainRouter.controller('manageContainerController', function ($scope,$http) {
-    $http({
+        $http({
             method: 'POST',
             url: 'http://localhost:3000/crud/listContainers',
             data: {},
@@ -411,7 +388,7 @@ mainRouter.controller('imageController', function($scope,$http){
     }
 });
 
-mainRouter.controller('loginCtrl',  ['$scope', '$http', 'UserService', function ($scope, $http, User) {
+mainRouter.controller('loginCtrl', function ($scope, $http) {
     $scope.loginUser = function () {
         $http({
             method: 'POST',
@@ -420,30 +397,15 @@ mainRouter.controller('loginCtrl',  ['$scope', '$http', 'UserService', function 
             headers: {'Content-Type': 'application/json'}
         }).success(function (data, state, headers, config) {
             if(state=='200'){
-                User.isLogged = true;
-                User.emailId= data.EmailId;
-                User.hostIp = data.HostIP;
-                User.hostUserName = data.HostUserName;
-                User.hostPassword = data.HostPassword;
                 window.location = '#/manageCluster';
             }
             else{
-                User.isLogged = false;
-                User.emailId= '';
-                User.hostIp = '';
-                User.hostUserName = '';
-                User.hostPassword = '';
                 window.location.reload();
             }
         }).error(function (data, state, headers, config) {
-                User.isLogged = false;
-                User.emailId= '';
-                User.hostIp = '';
-                User.hostUserName = '';
-                User.hostPassword = '';
         });
     }
-}]);
+});
 
 mainRouter.controller('registerCtrl', function ($scope, $http) {
     window.location = '#/register';
@@ -559,7 +521,6 @@ mainRouter.directive('cpuChart', ['$http', '$routeParams',
             }
         }
     }]);
-
 
 mainRouter.directive('memoryChart', ['$http', '$routeParams',
     function ($http,$routeParams) {
@@ -962,6 +923,34 @@ mainRouter.directive('ioChart', ['$http', '$routeParams',
                 };
                 initChart();
 
+            }
+        }
+    }]);
+
+mainRouter.directive('checkUser', ['$rootScope', '$location','$http',
+    function ($root, $loc, $http) {
+        return {
+            link: function (scope, elem, attrs, ctrl) {
+                $root.$on('$routeChangeStart', function(){
+                    checkUserLoggedIn();
+                });
+                function checkUserLoggedIn() {
+                    $http({
+                        method: 'POST',
+                        url: 'http://localhost:3000/crud/checkUser',
+                        data: {},
+                        headers: {'Content-Type': 'application/json'}
+                    }).success(function (data, status, headers, config) {
+                        if(status=='200'){
+
+                        }
+                        else{
+                            window.location = '#/';
+                        }
+                    }).error(function (data, status, headers, config) {
+                    });
+                }
+                checkUserLoggedIn();
             }
         }
     }]);

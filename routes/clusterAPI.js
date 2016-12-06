@@ -5,14 +5,13 @@ var express = require('express');
 var router = express.Router();
 var exec = require('ssh-exec');
 
-var hostinfo = {
-    user: 'project',
-    host: '192.168.86.130',
-    password: '1234'
-};
-
 //API For getting Image List for Cluster
 router.post('/listImages', function(req, res, next){
+    var hostinfo = {
+        user: req.session.user.HostUserName,
+        host: req.session.user.HostIP,
+        password: req.session.user.Password
+    };
     try{
         var url = 'cat decking.json';
         exec(url, hostinfo, function (err, stdout, stderr) {
@@ -49,6 +48,11 @@ router.post('/listImages', function(req, res, next){
 
 //API For getting Cluster List
 router.post('/getClusters', function (req, res, next) {
+    var hostinfo = {
+        user: req.session.user.HostUserName,
+        host: req.session.user.HostIP,
+        password: req.session.user.Password
+    };
     try{
         var url = 'cat decking.json';
         exec(url, hostinfo, function (err, stdout, stderr) {
@@ -103,8 +107,11 @@ router.post('/getClusters', function (req, res, next) {
 router.post('/createCluster', function(req, res, next){
     var clusterName = req.body.ClusterName;
     var containerList = req.body.ContainerList;
-    console.log(clusterName);
-    console.log(containerList);
+    var hostinfo = {
+        user: req.session.user.HostUserName,
+        host: req.session.user.HostIP,
+        password: req.session.user.Password
+    };
     if(typeof(clusterName) != 'undefined'  && clusterName.length > 0) {
         try{
             var url = 'cat decking.json';
@@ -191,7 +198,11 @@ router.post('/createCluster', function(req, res, next){
 //API For starting a Cluster
 router.post('/startCluster', function (req, res, next) {
     var clusterName = req.body.ClusterName;
-    console.log(clusterName);
+    var hostinfo = {
+        user: req.session.user.HostUserName,
+        host: req.session.user.HostIP,
+        password: req.session.user.Password
+    };
     if(typeof(clusterName) != 'undefined'  && clusterName.length > 0) {
         try{
             var url = 'cat decking.json';
@@ -259,6 +270,11 @@ router.post('/startCluster', function (req, res, next) {
 //API For stopping a Cluster
 router.post('/stopCluster', function (req, res, next) {
     var clusterName = req.body.ClusterName;
+    var hostinfo = {
+        user: req.session.user.HostUserName,
+        host: req.session.user.HostIP,
+        password: req.session.user.Password
+    };
     if(typeof(clusterName) != 'undefined'  && clusterName.length > 0) {
         try{
             var url = 'cat decking.json';
@@ -326,6 +342,11 @@ router.post('/stopCluster', function (req, res, next) {
 //API For Restarting a Cluster
 router.post('/restartCluster', function (req, res, next) {
     var clusterName = req.body.ClusterName;
+    var hostinfo = {
+        user: req.session.user.HostUserName,
+        host: req.session.user.HostIP,
+        password: req.session.user.Password
+    };
     if(typeof(clusterName) != 'undefined'  && clusterName.length > 0) {
         try{
             var url = 'cat decking.json';
@@ -393,6 +414,11 @@ router.post('/restartCluster', function (req, res, next) {
 //API For Deleting a Cluster
 router.post('/deleteCluster', function (req,res,next) {
     var clusterName = req.body.ClusterName;
+    var hostinfo = {
+        user: req.session.user.HostUserName,
+        host: req.session.user.HostIP,
+        password: req.session.user.Password
+    };
     if(typeof(clusterName) != 'undefined'  && clusterName.length > 0) {
         try{
             var url = 'cat decking.json';
