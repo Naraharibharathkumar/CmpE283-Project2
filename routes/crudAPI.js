@@ -155,6 +155,11 @@ router.post('/getContainer', function(req, res, next) {
 
 //API For getting image list from Host
 router.post('/listImages', function(req, res, next){
+    var hostinfo = {
+        user: req.session.user.HostUserName,
+        host: req.session.user.HostIP,
+        password: req.session.user.Password
+    };
     try{
         var imageUrl = 'curl http://localhost:2375/images/json';
         exec( imageUrl, hostinfo ,function (err1, result1, temp) {
