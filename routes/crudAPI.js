@@ -4,12 +4,110 @@
 var express = require('express');
 var router = express.Router();
 var exec = require('ssh-exec');
+var getMongoClient = require('../routes/connectMongo');
 
 var hostinfo = {
     user: 'project',
-    host: '192.168.86.129',
+    host: '192.168.86.130',
     password: '1234'
 };
+
+//API For Registering User
+router.post('/register', function(req, res, next){
+    console.log("Hey")
+    var emailId = req.body.EmailId;
+    var password = req.body.Password;
+    var hostIp = req.body.HostIP;
+    var hostUsername = req.body.HostUserName;
+    var hostPassword = req.body.HostPassword;
+    getMongoClient.mongoDbObj(function (mongoDbObj) {
+        if (mongoDbObj == null) {
+            res.setHeader('Content-Type', 'application/json');
+            res.status(450);
+            res.send({"Message": "DataBase Connection Failed"});
+        }
+        else {
+            try{
+                mongoDbObj.user.find({$and: [{EmailId : emailId.toString()}]}, {_id:0, EmailId:1}).toArray(function(err2, result2){
+                    if(err2){
+                        throw err2;
+                    }
+                    else{
+                        if(result2.length > 0){
+                            res.setHeader('Content-Type', 'application/json');
+                            res.status(204);
+                            res.send({"Message" : "User already Present"});
+                        }
+                        else{
+                            var tempJSON = { "EmailId" : emailId.toString(),
+                                "Password" : password.toString(),
+                                "HostIP" : hostIp.toString(),
+                                "HostUserName" : hostUsername.toString(),
+                                "HostPassword" : hostPassword.toString()
+                            };
+                            mongoDbObj.user.insert(tempJSON,{w:1},function (err) {
+                                if(err){
+                                    throw err;
+                                }
+                                else{
+                                    res.setHeader('Content-Type', 'application/json');
+                                    res.status(200);
+                                    res.send({"Message" : "Success"});
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            catch(ex){
+                res.setHeader('Content-Type', 'application/json');
+                res.status(450);
+                console.log(ex.toString())
+                res.send({"Message" : ex.toString()});
+            }
+        }
+    });
+});
+
+//API For logging in
+router.post('/login', function (req, res, next) {
+    var emailId = req.body.EmailId;
+    var password = req.body.Password;
+    getMongoClient.mongoDbObj(function (mongoDbObj) {
+        if(mongoDbObj==null) {
+            res.setHeader('Content-Type', 'application/json');
+            res.status(450);
+            res.send({"Message" : "DataBase Connection Failed"});
+        }
+        else{
+            try{
+                mongoDbObj.user.find({$and: [{EmailId : emailId.toString()}]}, {_id:0, EmailId:1, Password:1, HostIP:1, HostUserName:1, HostPassword:1 }).toArray(function(err, result){
+                    if(err){
+                        throw err;
+                    }
+                    else{
+                        if(result.length > 0){
+                            res.setHeader('Content-Type', 'application/json');
+                            res.status(200);
+                            res.send({"EmailId" : emailId, "Password" : password, "HostIP" : result[0].HostIP, "HostUserName" : result[0].HostUserName, "HostPassword" : result[0].HostPassword});
+                        }
+                        else{
+                            res.setHeader('Content-Type', 'application/json');
+                            res.status(204);
+                            res.send({"Message" : "No Users Found"});
+                        }
+                    }
+                });
+            }
+            catch(ex){
+                res.setHeader('Content-Type', 'application/json');
+                res.status(450);
+                res.send({"Message" : ex.toString()});
+            }
+        }
+    });
+});
+
 
 //API for Getting Container List
 router.post('/getContainer', function(req, res, next) {
@@ -215,9 +313,9 @@ router.post('/startContainer', function(req, res, next){
         var url = 'curl -XPOST http://127.0.0.1:2375/containers/'+containerId+'/start';
         try{
             exec( url , hostinfo, function (err, stdout, stderr) {
-                    res.setHeader('Content-Type', 'application/json');
-                    res.status(200);
-                    res.send(stdout);
+                res.setHeader('Content-Type', 'application/json');
+                res.status(200);
+                res.send(stdout);
             });
         }
         catch(ex){
@@ -266,9 +364,9 @@ router.post('/removeContainer', function(req, res, next){
         var url = 'curl -X DELETE http://127.0.0.1:2375/containers/'+containerId;
         try{
             exec( url , hostinfo , function (err, stdout, stderr) {
-                    res.setHeader('Content-Type', 'application/json');
-                    res.status(200);
-                    res.send(stdout);
+                res.setHeader('Content-Type', 'application/json');
+                res.status(200);
+                res.send(stdout);
             });
         }
         catch(ex){

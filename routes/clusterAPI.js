@@ -7,7 +7,7 @@ var exec = require('ssh-exec');
 
 var hostinfo = {
     user: 'project',
-    host: '192.168.86.129',
+    host: '192.168.86.130',
     password: '1234'
 };
 
@@ -439,9 +439,6 @@ router.post('/deleteCluster', function (req,res,next) {
                                     }
                                     catch(exe){
                                         if(exe==foundException){
-
-                                        }
-                                        else if(exe==notFoundException){
                                             var execUrl = 'docker ps -aqf "name='+container+'"';
                                             exec(execUrl, hostinfo, function(err1, stdout1, stderr1){
                                                 var url = 'curl -X DELETE http://127.0.0.1:2375/containers/'+stdout1.substring(0,stdout1.length-1);
@@ -449,6 +446,9 @@ router.post('/deleteCluster', function (req,res,next) {
                                                 });
                                             });
                                             delete stdout.containers[container];
+                                        }
+                                        else if(exe==notFoundException){
+
                                         }
                                     }
                                     index = index + 1;
